@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   stat.c                                             :+:      :+:    :+:   */
+/*   permissions.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 15:11:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/21 15:33:48 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/21 16:59:40 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,30 @@ static void		print_file_type(const int mode)
 		ft_putchar('l');
 	else if (mode & S_IFSOCK)
 		ft_putchar('s');
-	else if ((mode & S_ISUID) || (mode & S_ISGID))
+	else
+		ft_putchar('-');
+}
+
+static void		print_exec_perm(const int mode, const int sid_mask, const int x_mask)
+{
+	if (mode & x_mask && mode & sid_mask)
 		ft_putchar('s');
+	else if ((mode & x_mask) == 0 && mode & sid_mask)
+		ft_putchar('S');
+	else if (mode & x_mask)
+		ft_putchar('x');
+	else
+		ft_putchar('-');
+}
+
+static void		print_exec_perm_oth(const int mode)
+{
+	if (mode & S_IXOTH && mode & S_ISVTX)
+		ft_putchar('t');
+	else if ((mode & S_IXOTH) == 0 && mode & S_ISVTX)
+		ft_putchar('T');
+	else if (mode & S_IXOTH)
+		ft_putchar('x');
 	else
 		ft_putchar('-');
 }
@@ -39,11 +61,11 @@ void			print_permissions(const int mode)
 	print_file_type(mode);
 	ft_putchar(mode & S_IRUSR ? 'r' : '-');
 	ft_putchar(mode & S_IWUSR ? 'w' : '-');
-	ft_putchar(mode & S_IXUSR ? 'x' : '-');
+	print_exec_perm(mode, S_ISUID, S_IXUSR);
 	ft_putchar(mode & S_IRGRP ? 'r' : '-');
 	ft_putchar(mode & S_IWGRP ? 'w' : '-');
-	ft_putchar(mode & S_IXGRP ? 'x' : '-');
+	print_exec_perm(mode, S_ISGID, S_IXGRP);
 	ft_putchar(mode & S_IROTH ? 'r' : '-');
 	ft_putchar(mode & S_IWOTH ? 'w' : '-');
-	ft_putchar(mode & S_IXOTH ? 'x' : '-');
+	print_exec_perm_oth(mode);
 }
