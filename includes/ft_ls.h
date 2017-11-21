@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/21 14:14:19 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/21 15:16:24 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,5 +29,6 @@ int		parse_arg(t_arg_opt *arg_opt, char *arg);
 int		usage(int code);
 
 int		ft_ls(char **av, t_arg_opt *opt);
+void	print_permissions(const int mode);
 
 #endif

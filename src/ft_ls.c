@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/21 14:18:25 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/21 15:32:07 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int		ft_ls(char **av, t_arg_opt *opt)
 	if (av[0] == 0)
 		return (ft_puterr(0, "TODO: Read current directory"));
 	stat(av[0], &path_stat);
-	ft_putnbr(path_stat.st_mode);
-	ft_putendl("");
+	print_permissions(path_stat.st_mode);
+	ft_putchar(' ');
 	dir = opendir(av[0]);
 	if (dir == 0)
 		return (ft_puterr(0, "TODO: ls file"));
