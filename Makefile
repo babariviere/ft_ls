@@ -5,17 +5,17 @@ SRC=$(addprefix src/, $(SRC_NAME))
 OBJ=$(patsubst src/%.c, obj/%.o, $(SRC))
 OBJ_DBG=$(patsubst src/%.c, obj_dbg/%.o, $(SRC))
 CC=clang
-LIBS=-Llibft -lft
+LIBS=-Llibft/ -lft
 LIBS_DBG=-Llibft -lftdbg
 CFLAGS=-Wall -Werror -Wextra -Iincludes -Ilibft/includes
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(LIBS) -o $(NAME) $(OBJ)
+	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBS)
 
 $(NAME_DBG): $(OBJ_DBG)
-	$(CC) $(CFLAGS) $(LIBS_DBG) -o $(NAME_DBG) $(OBJ_DBG)
+	$(CC) $(CFLAGS) -o $(NAME_DBG) $(OBJ_DBG) $(LIBS_DBG)
 
 obj/%.o: src/%.c
 	@mkdir -p obj
