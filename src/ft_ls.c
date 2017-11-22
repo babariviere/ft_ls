@@ -6,13 +6,16 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/21 17:28:00 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/22 15:21:48 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
 // TODO: print in well formatted column
+// TODO: store in struct tab string and tab size_t for len of each strings
+// find the longest and print
+// read argument and print with format
 void	print_file(char *path, char *file, t_arg_opt *opt)
 {
 	struct stat		path_stat;
@@ -25,7 +28,7 @@ void	print_file(char *path, char *file, t_arg_opt *opt)
 	if (opt->long_format)
 	{
 		print_permissions(path_stat.st_mode);
-		ft_putstr("  ");
+		ft_putchar_mul(' ', 2);
 		ft_putnbr(path_stat.st_nlink);
 		ft_putchar(' ');
 		ft_putstr(passwd->pw_name);
@@ -47,7 +50,7 @@ int		ft_ls(char **av, t_arg_opt *opt)
 
 	(void)opt;
 	if (av[0] == 0)
-		return (ft_puterr(0, "TODO: Read current directory"));
+		av[0] = ".";
 	dir = opendir(av[0]);
 	if (av[0][ft_strlen(av[0]) - 1] != '/')
 		dir_path = ft_strjoin(av[0], "/");
