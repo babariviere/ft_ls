@@ -2,3 +2,4 @@
 - The longest always set the len
 - ls -l => perm__t_login__group__size_month_day_hour:min_file
 - ls -R => file + (\n dir: \n files)*
+- Move formatted to LIBFT
