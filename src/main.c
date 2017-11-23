@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/21 12:43:10 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/23 09:35:20 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ int		main(int ac, char **av)
 
 	if ((arg_opt = ft_memalloc(sizeof(t_arg_opt))) == 0)
 		return (1);
+	arg_opt->one_entry = 1;
 	idx = 1;
 	while (idx < ac)
 	{

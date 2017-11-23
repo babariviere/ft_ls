@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:10:02 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/21 10:51:42 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/23 09:34:57 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,8 @@ static int	set_opt_from_arg(t_arg_opt *arg_opt, char arg)
 		return (arg_opt->reverse = 1);
 	else if (arg == 't')
 		return (arg_opt->sort_time = 1);
+	else if (arg == '1')
+		return (arg_opt->one_entry = 1);
 	return (0);
 }
 
