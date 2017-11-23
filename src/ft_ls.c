@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/23 17:20:56 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/23 17:32:57 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ t_formatted	*gather_file_info(char *path, char *file, t_arg_opt *opt)
 		add_formatted_str(formatted, getgrgid(path_stat.st_gid)->gr_name, 2);
 		add_formatted_str(formatted, ft_itoa(path_stat.st_size), 1);
 		file_time = path_stat.st_mtimespec.tv_sec;
-		time_str = ft_strdup(ctime(&file_time));
+		time_str = ft_strsub(ctime(&file_time), 4, 13);
 		time_str[ft_strlen(time_str) - 1] = 0;
 		add_formatted_str(formatted, time_str, 1);
 	}
