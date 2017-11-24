@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/24 14:00:01 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 17:00:28 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/24 17:28:29 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,10 @@ char	**get_dir_rec(char *path, t_arg_opt *opt)
 			continue ;
 		joined = ft_strjoin(path, ent->d_name);
 		if (check_if_is_dir(joined))
+		{
 			paths[idx++] = ft_strjoin(joined, ent->d_name);
+			ft_join_tab(paths
+		}
 	}
 	closedir(dir);
 }
