@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 10:55:33 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/24 13:14:01 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void		gather_file_info_long_format(t_formatted *formatted, char *path,
 	ft_add_formatted_str(formatted,
 			ft_strdup(getpwuid(path_stat.st_uid)->pw_name), 2);
 	ft_add_formatted_str(formatted,
-			ft_strdup(getgrgid(path_stat.st_gid)->gr_name), 2);
+			ft_strdup(getgrgid(path_stat.st_gid)->gr_name), (opt->human == 0 ? 2 : 3));
 	if (opt->human == 0)
 		ft_add_formatted_str(formatted, ft_itoa(path_stat.st_size), 1);
 	else
@@ -59,6 +59,8 @@ int		ft_ls(char **av, t_arg_opt *opt)
 	struct dirent	*ent;
 	t_formatted		**formatteds;
 	size_t			len;
+	struct stat		path_stat;
+	size_t			total_blocks;
 
 	if (av[0] == 0)
 		av[0] = ".";
@@ -77,15 +79,32 @@ int		ft_ls(char **av, t_arg_opt *opt)
 	formatteds = ft_memalloc(sizeof(t_formatted) * len + 1);
 	formatteds[len] = 0;
 	len = 0;
+	total_blocks = 0;
 	while ((ent = readdir(dir)) != 0)
 	{
 		if ((ent->d_name[0] == '.' && opt->hidden) ||
 			(ent->d_name[0] != '.'))
+		{
+			// TODO: stock path instead of two strjoin, lazy man
 			formatteds[len++] = gather_file_info(ft_strjoin(dir_path, ent->d_name), ent->d_name, opt);
+			if (opt->long_format)
+			{
+				stat(ft_strjoin(dir_path, ent->d_name), &path_stat);
+				total_blocks += path_stat.st_blocks;
+			}
+		}
 	}
 	closedir(dir);
 	if (opt->long_format)
+	{
+		ft_putstr("total ");
+		ft_putnbr(total_blocks);
+		ft_putchar('\n');
 		ft_calibrate_formatted_range(formatteds, 1, 5, -1);
+		ft_sort_formatteds(formatteds, 6, (opt->reverse ? ft_strcmp_rev : ft_strcmp));
+	}
+	else
+		ft_sort_formatteds(formatteds, 0, (opt->reverse ? ft_strcmp_rev : ft_strcmp));
 	len = 0;
 	while (formatteds[len])
 	{
