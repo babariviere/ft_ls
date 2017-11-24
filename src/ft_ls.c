@@ -6,11 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 13:14:01 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/24 14:39:31 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+
+void	list_files_rec(char *path, t_arg_opt *opt, size_t len);
 
 void		gather_file_info_long_format(t_formatted *formatted, char *path,
 		t_arg_opt *opt)
@@ -44,15 +46,13 @@ t_formatted	*gather_file_info(char *path, char *file, t_arg_opt *opt)
 
 	if ((formatted = ft_init_formatted((opt->long_format ? 7 : 1))) == 0)
 		return (0);
-	formatted->tab = ft_memalloc(sizeof(t_formatted) * formatted->len);
-	formatted->padding = ft_memalloc(sizeof(int) * (formatted->len - 1));
 	if (opt->long_format)
 		gather_file_info_long_format(formatted, path, opt);
 	ft_add_formatted_str(formatted, ft_strdup(file), 0);
 	return (formatted);
 }
 
-int		ft_ls(char **av, t_arg_opt *opt)
+void	list_files(char *path, t_arg_opt *opt)
 {
 	char			*dir_path;
 	DIR				*dir;
@@ -62,20 +62,19 @@ int		ft_ls(char **av, t_arg_opt *opt)
 	struct stat		path_stat;
 	size_t			total_blocks;
 
-	if (av[0] == 0)
-		av[0] = ".";
-	dir = opendir(av[0]);
-	if (av[0][ft_strlen(av[0]) - 1] != '/')
-		dir_path = ft_strjoin(av[0], "/");
+	if (path == 0)
+		path = ".";
+	if (path[ft_strlen(path) - 1] != '/')
+		dir_path = ft_strjoin(path, "/");
 	else
-		dir_path = av[0];
+		dir_path = path;
+	len = count_files(dir_path);
+	dir = opendir(path);
 	if (dir == 0)
-		return (ft_puterr(0, "TODO: ls file"));
-	len = 0;
-	while (readdir(dir) != 0)
-		len++;
-	closedir(dir);
-	dir = opendir(av[0]);
+	{
+		ft_puterr(0, "TODO: ls file");
+		return ;
+	}
 	formatteds = ft_memalloc(sizeof(t_formatted) * len + 1);
 	formatteds[len] = 0;
 	len = 0;
@@ -115,5 +114,71 @@ int		ft_ls(char **av, t_arg_opt *opt)
 			ft_putchar('\n');
 	}
 	free(formatteds);
-	return (1);
+	if (opt->recursive)
+		list_files_rec(dir_path, opt, len);
+}
+
+void	list_files_rec(char *path, t_arg_opt *opt, size_t len)
+{
+	DIR				*dir;
+	struct stat		path_stat;
+	struct dirent	*ent;
+	char			**paths;
+	size_t			idx;
+
+	dir = opendir(path);
+	idx = 0;
+	paths = ft_memalloc(sizeof(char *) * (len + 1));
+	while ((ent = readdir(dir)) != 0)
+	{
+		if (ft_strcmp(ent->d_name, ".") == 0 ||
+				ft_strcmp(ent->d_name, "..") == 0)
+			continue ;
+		if (ent->d_name[0] == '.' && opt->hidden == 0)
+			continue ;
+		stat(ft_strjoin(path, ent->d_name), &path_stat);
+		// TODO: idem than above
+		if ((path_stat.st_mode & S_IFDIR) == S_IFDIR)
+			paths[idx++] = ft_strjoin(path, ent->d_name);
+	}
+	closedir(dir);
+	list_dirs(paths, opt);
+}
+
+void	list_dirs(char **paths, t_arg_opt *opt)
+{
+	if (paths == 0 || *paths == 0)
+		return ;
+	while (*paths)
+	{
+		ft_putchar('\n');
+		ft_putstr(*paths);
+		ft_putstr(":\n");
+		list_files(*paths, opt);
+		paths++;
+	}
+}
+
+void	list_dirs_av(char **av, t_arg_opt *opt)
+{
+	if (av == 0 || *av == 0)
+	{
+		list_files(".", opt);
+		return ;
+	}
+	if (av[0] && av[1])
+	{
+		ft_putstr(*av);
+		ft_putstr(":\n");
+	}
+	list_files(*av, opt);
+	av++;
+	while (*av)
+	{
+		ft_putchar('\n');
+		ft_putstr(*av);
+		ft_putstr(":\n");
+		list_files(*av, opt);
+		av++;
+	}
 }

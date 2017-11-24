@@ -1,37 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   io.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 14:27:45 by briviere         ###   ########.fr       */
+/*   Created: 2017/11/24 14:00:01 by briviere          #+#    #+#             */
+/*   Updated: 2017/11/24 14:02:04 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int		main(int ac, char **av)
+size_t	count_files(char *path)
 {
-	t_arg_opt	*arg_opt;
-	int			idx;
+	size_t	count;
+	DIR		*dir;
 
-	if ((arg_opt = ft_memalloc(sizeof(t_arg_opt))) == 0)
-		return (1);
-	arg_opt->one_entry = 1;
-	idx = 1;
-	while (idx < ac)
-	{
-		if (av[idx][0] == '-' && av[idx][1] != 0)
-		{
-			if (parse_arg(arg_opt, av[idx++]) == 0)
-				return (usage(1));
-		}
-		else
-			break ;
-	}
-	list_dirs_av(av + idx, arg_opt);
-	//free(arg_opt);
-	return (0);
+	count = 0;
+	dir = opendir(path);
+	if (dir == 0)
+		return (0);
+	while (readdir(dir))
+		count++;
+	closedir(dir);
+	return (count);
 }

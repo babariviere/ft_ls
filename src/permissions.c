@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 15:11:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/23 16:09:28 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/24 13:21:23 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ static char		gather_file_type(const int mode)
 		return ('-');
 }
 
-static char		gather_exec_perm(const int mode, const int sid_mask, const int x_mask)
+static char		gather_exec_perm(const int mode, const int sid_mask,
+		const int x_mask)
 {
 	if (mode & x_mask && mode & sid_mask)
 		return ('s');

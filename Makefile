@@ -1,6 +1,6 @@
 NAME=ft_ls
 NAME_DBG=ft_lsdbg
-SRC_NAME=main.c arg_opt.c usage.c ft_ls.c permissions.c
+SRC_NAME=main.c arg_opt.c usage.c ft_ls.c permissions.c io.c
 SRC=$(addprefix src/, $(SRC_NAME))
 OBJ=$(patsubst src/%.c, obj/%.o, $(SRC))
 OBJ_DBG=$(patsubst src/%.c, obj_dbg/%.o, $(SRC))

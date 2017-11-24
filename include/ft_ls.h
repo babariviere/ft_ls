@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 10:51:23 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/24 14:11:44 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,11 @@ typedef struct	s_arg_opt {
 int		parse_arg(t_arg_opt *arg_opt, char *arg);
 int		usage(int code);
 
-int		ft_ls(char **av, t_arg_opt *opt);
+void	list_dirs_av(char **av, t_arg_opt *opt);
+void	list_dirs(char **paths, t_arg_opt *opt);
+void	list_files(char *path, t_arg_opt *opt);
 char	*gather_permissions(const int mode);
+
+size_t	count_files(char *path);
 
 #endif
