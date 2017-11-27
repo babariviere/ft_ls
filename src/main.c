@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 14:27:45 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/27 17:35:43 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,10 @@ int		main(int ac, char **av)
 		else
 			break ;
 	}
-	list_dirs_av(av + idx, arg_opt);
+	//list_dirs_av(av + idx, arg_opt);
+	t_path	*path = ft_init_path(av[idx]);
+	ft_set_dir_subfiles(path, 1, 0, 1);
+	ft_print_path_and_sub(path, 0);
 	//free(arg_opt);
 	return (0);
 }

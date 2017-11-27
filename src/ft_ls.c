@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 14:39:31 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/27 17:36:11 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	list_files(char *path, t_arg_opt *opt)
 		dir_path = ft_strjoin(path, "/");
 	else
 		dir_path = path;
-	len = count_files(dir_path);
+	len = count_files(dir_path, opt->hidden);
 	dir = opendir(path);
 	if (dir == 0)
 	{
