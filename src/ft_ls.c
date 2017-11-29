@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/28 13:21:42 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 20:09:08 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	list_files(t_path *path, t_arg_opt *opt)
 		dir_path = ft_strjoin(path->path, "/");
 	else
 		dir_path = path->path;
-	formatteds = ft_memalloc(sizeof(t_formatted) * (path->sub_path_len + 1));
+	formatteds = ft_memalloc(sizeof(t_formatted) * (path->sub_path_len + 1 + opt->hidden * 2));
 	formatteds[path->sub_path_len] = 0;
 	total_blocks = 0;
 	len = 0;
@@ -90,69 +90,51 @@ void	list_files(t_path *path, t_arg_opt *opt)
 	free(formatteds);
 }
 
-//void	list_files_rec(char *path, t_arg_opt *opt, size_t len)
-//{
-//	DIR				*dir;
-//	struct stat		path_stat;
-//	struct dirent	*ent;
-//	char			**paths;
-//	size_t			idx;
-//
-//	dir = opendir(path);
-//	idx = 0;
-//	paths = ft_memalloc(sizeof(char *) * (len + 1));
-//	while ((ent = readdir(dir)) != 0)
-//	{
-//		if (ft_strcmp(ent->d_name, ".") == 0 ||
-//				ft_strcmp(ent->d_name, "..") == 0)
-//			continue ;
-//		if (ent->d_name[0] == '.' && opt->hidden == 0)
-//			continue ;
-//		stat(ft_strjoin(path, ent->d_name), &path_stat);
-//		// TODO: idem than above
-//		if ((path_stat.st_mode & S_IFDIR) == S_IFDIR)
-//			paths[idx++] = ft_strjoin(path, ent->d_name);
-//	}
-//	closedir(dir);
-//	list_dirs(paths, opt);
-//}
-
-void	list_dirs(t_path **paths, t_arg_opt *opt)
-{
-	if (paths == 0 || *paths == 0)
-		return ;
-	while (*paths)
-	{
-		ft_putchar('\n');
-		ft_putstr((*paths)->path);
-		ft_putstr(":\n");
-		list_files(*paths, opt);
-		paths++;
-	}
-}
-
-void	list_dir(t_path *path, t_arg_opt *opt, int start)
+void	list_dir(t_path *path, t_arg_opt *opt, int start, int is_printed)
 {
 	size_t		idx;
 
 	if (path == 0)
-		return ;
-	if (start)
 	{
-		if (opt->long_format)
-			ft_set_path_info(path);
-		ft_set_dir_subfiles(path, opt->recursive, opt->long_format,
-					opt->hidden);
-	}
-	if (path->sub_path == 0)
 		return ;
-	ft_putendl(ft_strjoin(path->path, ":"));
+	}
+	if (!check_file_exists(path->path))
+	{
+		print_error2(path->path, ": No such file or directory");
+		return ;
+	}
+	if (opt->long_format)
+		ft_set_path_info(path);
+	if (ft_set_dir_subfiles(path, opt->recursive, opt->long_format,
+				opt->hidden, 1) == -1)
+	{
+		print_error3(path->path, ": ", strerror(errno));
+		return ;
+	}
+	ft_sort_subpath(path, (opt->reverse ? ft_strcmp_rev : ft_strcmp));
+	if (!path->is_dir)
+	{
+		path->sub_path = malloc(sizeof(t_path *) * 2);
+		path->sub_path[0] = path;
+		path->sub_path[1] = 0;
+		path->sub_path_len = 1;
+		list_files(path, opt);
+		return ;
+	}
+	if (is_printed)
+		ft_putchar('\n');
+	if (!start)
+		ft_putendl(ft_strjoin(path->path, ":"));
 	list_files(path, opt);
 	idx = 0;
 	if (opt->recursive)
 	{
 		while (idx < path->sub_path_len)
-			list_dir(path->sub_path[idx++], opt, 0);
+		{
+			if (!(ft_strequ(path->sub_path[idx]->name, ".") || ft_strequ(path->sub_path[idx]->name, "..")))
+				list_dir(path->sub_path[idx], opt, 0, 1);
+			idx++;
+		}
 	}
 	free(path);
 }
@@ -161,7 +143,7 @@ void	list_dirs_av(char **av, t_arg_opt *opt)
 {
 	if (*av == 0)
 	{
-		*av = "";
+		list_dir(ft_init_path("", "."), opt, 1, 0);
 		return ;
 	}
 	if (av[0] && av[1])
@@ -169,14 +151,14 @@ void	list_dirs_av(char **av, t_arg_opt *opt)
 		ft_putstr(*av);
 		ft_putstr(":\n");
 	}
-	list_dir(ft_init_path("", *av), opt, 1);
+	list_dir(ft_init_path("", *av), opt, 1, 0);
 	av++;
 	while (*av)
 	{
 		ft_putchar('\n');
 		ft_putstr(*av);
 		ft_putstr(":\n");
-		list_dir(ft_init_path("", *av), opt, 1);
+		list_dir(ft_init_path("", *av), opt, 1, 0);
 		av++;
 	}
 }

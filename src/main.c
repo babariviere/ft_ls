@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/28 10:49:39 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 11:42:06 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,12 @@ int		main(int ac, char **av)
 	idx = 1;
 	while (idx < ac)
 	{
-		if (av[idx][0] == '-' && av[idx][1] != 0)
+		if (av[idx][0] == '-' && av[idx][1] == '-')
+		{
+			idx++;
+			break ;
+		}
+		else if (av[idx][0] == '-' && av[idx][1] != 0)
 		{
 			if (parse_arg(arg_opt, av[idx++]) == 0)
 				return (usage(1));

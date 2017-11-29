@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/27 09:55:42 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/28 12:56:08 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 20:12:54 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ t_path	*ft_init_path(char *dir_path, char *name)
 
 	if ((res = ft_memalloc(sizeof(t_path))) == 0)
 		return (0);
-	if (dir_path[ft_strlen(dir_path - 1)] != '/' && ft_strlen(dir_path) > 0)
+	if (dir_path[ft_strlen(dir_path) - 1] != '/' && ft_strlen(dir_path) > 0)
 		dir_path_s = ft_strjoin(dir_path, "/");
 	else
 		dir_path_s = ft_strdup(dir_path);
@@ -30,7 +30,7 @@ t_path	*ft_init_path(char *dir_path, char *name)
 	stat(res->path, &path_stat);
 	res->sub_path = 0;
 	res->sub_path_len = 0;
-	res->mode = path_stat.st_mode;
+	res->is_dir = FT_ISDIR(path_stat.st_mode);
 	res->permissions = 0;
 	res->nlink = 0;
 	res->pw_name = 0;
@@ -46,12 +46,22 @@ void	ft_set_path_info(t_path *path)
 	struct stat		path_stat;
 	time_t			file_time;
 	char			*time_str;
+	struct passwd	*pwd;
+	struct group	*grp;
 
-	stat(path->path, &path_stat);
-	path->permissions = gather_permissions(path->mode);
+	lstat(path->path, &path_stat);
+	path->permissions = gather_permissions(path_stat.st_mode);
 	path->nlink = path_stat.st_nlink;
-	path->pw_name = getpwuid(path_stat.st_uid)->pw_name;
-	path->gr_name = getgrgid(path_stat.st_gid)->gr_name;
+	pwd = getpwuid(path_stat.st_uid);
+	if (pwd)
+		path->pw_name = pwd->pw_name;
+	else
+		path->pw_name = ft_itoa(path_stat.st_uid);
+	grp = getgrgid(path_stat.st_gid);
+	if (grp)
+		path->gr_name = grp->gr_name;
+	else
+		path->gr_name = ft_itoa(path_stat.st_gid);
 	path->size = path_stat.st_size;
 	file_time = path_stat.st_mtimespec.tv_sec;
 	time_str = ft_strsub(ctime(&file_time), 4, 13);
@@ -59,36 +69,42 @@ void	ft_set_path_info(t_path *path)
 	path->mtime = time_str;
 }
 
-void	ft_set_dir_subfiles(t_path *path, int recursive, int set_info, int hidden)
+int		ft_set_dir_subfiles(t_path *path, int recursive, int set_info, int hidden, int depth)
 {
 	DIR				*dir;
 	struct dirent	*ent;
 	size_t			idx;
 
-	path->sub_path_len = count_files(path->path, hidden);
+	if (path == 0)
+		return (0);
+	if (!path->is_dir)
+		return (0);
+	if (count_files(&path->sub_path_len, path->path, hidden) == -1)
+		return (-1);
+	path->sub_path_len += hidden * 2;
 	if (path->sub_path_len == 0 || (path->sub_path = ft_memalloc(sizeof(t_path *) *
-					(path->sub_path_len + 1))) == 0)
-		return ;
+				(path->sub_path_len + 1))) == 0)
+		return (0);
 	path->sub_path[path->sub_path_len] = 0;
 	if ((dir = opendir(path->path)) == 0)
-		return ;
+		return (-1);
 	idx = 0;
+	depth--;
 	while ((ent = readdir(dir)))
 	{
-		if (ft_strequ(ent->d_name, ".") || ft_strequ(ent->d_name, ".."))
-			continue ;
 		if ((ent->d_name[0] == '.' && hidden) || ent->d_name[0] != '.')
 		{
 			if ((path->sub_path[idx] = ft_init_path(path->path, ent->d_name)) == 0)
-				return ;
-			if (recursive)
-				ft_set_dir_subfiles(path->sub_path[idx], recursive, set_info, hidden);
+				return (0);
+			if (recursive && !(ft_strequ(ent->d_name, ".") || ft_strequ(ent->d_name, "..")) && depth >= 0)
+				ft_set_dir_subfiles(path->sub_path[idx], recursive, set_info, hidden, depth);
 			if (set_info)
 				ft_set_path_info(path->sub_path[idx]);
 			idx++;
 		}
 	}
 	closedir(dir);
+	return (1);
 }
 
 size_t			ft_path_count_recursive(t_path *path)
@@ -119,57 +135,24 @@ size_t			ft_path_count_elem(t_path *path)
 	return (elem);
 }
 
-t_formatted		**ft_path_to_formatteds(t_path *path, char *str)
+void			ft_sort_subpath(t_path *path, int (*cmp)(const char *, const char *))
 {
-	t_formatted		**formatteds;
-	t_formatted		**tmp1;
-	t_formatted		**tmp2;
-	char			*p_str;
-	size_t			idx;
+	size_t		idx;
+	size_t		sub_idx;
 
-	if ((formatteds = ft_memalloc(sizeof(t_formatted *) * 2)) == 0)
-		return (0);
-	if ((formatteds[0] = ft_init_formatted(ft_path_count_elem(path))) == 0)
-		return (0);
-	p_str = ft_strjoin(str, path->path);
-	ft_add_formatted_str(formatteds[0], p_str, 0);
-	formatteds[1] = 0;
+	if (path->sub_path == 0)
+		return ;
 	idx = 0;
-	if (path->sub_path == 0 || path->sub_path_len == 0)
-		return (formatteds);
-	if (path->path[ft_strlen(path->path) - 1] != '/')
-		p_str = ft_strjoin(p_str, "/");
-	while (idx < path->sub_path_len)
+	while (idx < path->sub_path_len - 1)
 	{
-		tmp1 = formatteds;
-		tmp2 = ft_path_to_formatteds(path->sub_path[idx++], p_str);
-		formatteds = (t_formatted**)ft_join_tab((void*)tmp1,
-				(void*)tmp2, sizeof(t_formatted *));
-		ft_memdel((void **)&tmp1);
-		ft_memdel((void **)&tmp2);
+		sub_idx = idx + 1;
+		while (sub_idx < path->sub_path_len)
+		{
+			if (cmp(path->sub_path[idx]->name, path->sub_path[sub_idx]->name) > 0)
+				ft_swap_ptr((void**)(path->sub_path + idx),
+						(void**)(path->sub_path + sub_idx));
+			sub_idx++;
+		}
+		idx++;
 	}
-	return (formatteds);
-}
-
-void			ft_print_path_and_sub(t_path *path, char *parent)
-{
-	char	*full_path;
-	char	*tmp;
-	size_t	idx;
-
-	if (!path)
-		return ;
-	if (path->path && parent)
-		full_path = ft_strjoin(parent, path->path);
-	else if (path->path)
-		full_path = ft_strdup(path->path);
-	else
-		return ;
-	ft_putendl(full_path);
-	tmp = full_path;
-	full_path = ft_strjoin(full_path, "/");
-	//free(tmp);
-	idx = 0;
-	while (path->sub_path && path->sub_path[idx])
-		ft_print_path_and_sub(path->sub_path[idx++], full_path);
 }

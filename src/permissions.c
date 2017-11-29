@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 15:11:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/24 13:21:23 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 16:54:31 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,19 @@
 
 static char		gather_file_type(const int mode)
 {
-	if (mode & S_IFIFO)
+	if ((mode & S_IFIFO) == S_IFIFO)
 		return ('p');
-	else if (mode & S_IFCHR)
-		return ('c');
-	else if (mode & S_IFDIR)
-		return ('d');
-	else if (mode & S_IFBLK)
-		return ('b');
-	else if (mode & S_IFREG)
-		return ('-');
-	else if (mode & S_IFLNK)
+	else if ((mode & S_IFLNK) == S_IFLNK)
 		return ('l');
-	else if (mode & S_IFSOCK)
+	else if ((mode & S_IFCHR) == S_IFCHR)
+		return ('c');
+	else if ((mode & S_IFDIR) == S_IFDIR)
+		return ('d');
+	else if ((mode & S_IFBLK) == S_IFBLK)
+		return ('b');
+	else if ((mode & S_IFREG) == S_IFREG)
+		return ('-');
+	else if ((mode & S_IFSOCK) == S_IFSOCK)
 		return ('s');
 	else
 		return ('-');
