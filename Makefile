@@ -30,6 +30,9 @@ obj_dbg/%.o: src/%.c
 debug: $(NAME_DBG)
 	@lldb $(NAME_DBG)
 
+leaks: $(NAME_DBG)
+	@valgrind --leak-check=full --track-origins=yes $(NAME_DBG)
+
 clean:
 	@make -C libft/ clean
 	@rm -rf obj

@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:09:03 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 06:15:16 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ int		main(int ac, char **av)
 	while (spath[idx])
 	{
 		ft_putendl(spath[idx]->name);
-		ft_free_path(spath + idx++);
+		ft_free_path(spath + idx);
+		idx++;
 	}
 	free(spath);
 	ft_free_path(&path);

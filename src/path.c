@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:06:30 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 06:16:47 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void		ft_free_path(t_path **path)
 	if ((*path)->path)
 		ft_strdel(&(*path)->path);
 	if ((*path)->name)
-		ft_strdel(&(*path)->path);
+		ft_strdel(&(*path)->name);
 	if ((*path)->stat)
 		ft_memdel((void **)&(*path)->stat);
 	ft_memdel((void **)path);
