@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:49:50 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 08:41:59 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int		main(int ac, char **av)
 	if ((opt = ft_memalloc(sizeof(t_arg_opt))) == 0)
 		return (1);
 	opt->one_entry = 1;
-	opt->sort = FT_SORT_MTIME;
+	opt->sort = FT_SORT_NAME;
 	idx = 1;
 	while (idx < ac)
 	{

@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 04:47:06 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:59:45 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 08:38:01 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,17 @@
 
 void	make_sort(t_path **path, t_arg_opt *opt)
 {
+	ft_putnbr_bin(opt->sort);
+	ft_putchar('\n');
 	if ((opt->sort & FT_SORT_NAME) == FT_SORT_NAME)
 		ft_sort_subpath(path, ((opt->sort & FT_SORT_REV) == FT_SORT_REV ?
 					ft_strcmp_rev : ft_strcmp));
+	else if ((opt->sort & FT_SORT_ATIME) == FT_SORT_ATIME)
+		ft_sort_subpath_atime(path, (opt->sort & FT_SORT_REV) == FT_SORT_REV);
+	else if ((opt->sort & FT_SORT_MTIME) == FT_SORT_MTIME)
+		ft_sort_subpath_mtime(path, (opt->sort & FT_SORT_REV) == FT_SORT_REV);
+	else if ((opt->sort & FT_SORT_CTIME) == FT_SORT_CTIME)
+		ft_sort_subpath_ctime(path, (opt->sort & FT_SORT_REV) == FT_SORT_REV);
 }
 
 void	list_files(t_path **path, t_arg_opt *opt)

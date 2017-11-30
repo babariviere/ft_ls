@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 07:02:31 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 08:40:28 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@
 # define FT_IWOTH(mode) ((mode & S_IWOTH) == S_IWOTH)
 # define FT_IXOTH(mode) ((mode & S_IXOTH) == S_IXOTH)
 
-# define FT_NO_SORT		(1 < 0)
-# define FT_SORT_REV	(1 < 1)
-# define FT_SORT_NAME	(1 < 2)
-# define FT_SORT_ATIME	(1 < 3)
-# define FT_SORT_MTIME	(1 < 4)
-# define FT_SORT_CTIME	(1 < 5)
+# define FT_NO_SORT		(1 << 0)
+# define FT_SORT_REV	(1 << 1)
+# define FT_SORT_NAME	(1 << 2)
+# define FT_SORT_ATIME	(1 << 3)
+# define FT_SORT_MTIME	(1 << 4)
+# define FT_SORT_CTIME	(1 << 5)
 
 typedef struct	s_arg_opt {
 	int		long_format;
@@ -79,8 +79,11 @@ int		count_files(const char *path, int hidden);
 
 t_path	*ft_init_path(const char *d_path, const char *name, int follow_lnk);
 t_path	**ft_get_subpath(const char *path, int follow_lnk, int hidden);
-void	ft_sort_subpath(t_path **path, int (*cmp)(const char *, const char *));
 void	ft_free_path(t_path **path);
+void	ft_sort_subpath(t_path **path, int (*cmp)(const char *, const char *));
+void	ft_sort_subpath_atime(t_path **path, int rev);
+void	ft_sort_subpath_mtime(t_path **path, int rev);
+void	ft_sort_subpath_ctime(t_path **path, int rev);
 
 void	list_files(t_path **path, t_arg_opt *opt);
 
