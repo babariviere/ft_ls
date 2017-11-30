@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 04:22:28 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 04:36:39 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,9 @@ typedef struct	s_path {
 
 int		parse_arg(t_arg_opt *arg_opt, const char *arg);
 int		usage(int code);
-void	print_error(int err, char *path);
+void	print_error(int err, const char *path);
 
 char	*get_permissions(const int mode);
+int		count_files(const char *path, int hidden);
 
 #endif

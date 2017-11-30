@@ -1,41 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   io.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 04:24:40 by briviere         ###   ########.fr       */
+/*   Created: 2017/11/30 04:35:54 by briviere          #+#    #+#             */
+/*   Updated: 2017/11/30 04:51:11 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-int		main(int ac, char **av)
+int		count_files(const char *path, int hidden)
 {
-	t_arg_opt	*arg_opt;
-	int			idx;
+	DIR				*dir;
+	struct dirent	*ent;
+	int				count;
 
-	if ((arg_opt = ft_memalloc(sizeof(t_arg_opt))) == 0)
-		return (1);
-	arg_opt->one_entry = 1;
-	idx = 1;
-	while (idx < ac)
+	dir = opendir(path);
+	if (dir == 0)
+		return (-1);
+	count = 0;
+	while ((ent = readdir(dir)))
 	{
-		if (av[idx][0] == '-' && av[idx][1] == '-')
-		{
-			idx++;
-			break ;
-		}
-		else if (av[idx][0] == '-' && av[idx][1] != 0)
-		{
-			if (parse_arg(arg_opt, av[idx++]) == 0)
-				return (usage(1));
-		}
-		else
-			break ;
+		if ((ent->d_name[0] == '.' && !hidden) || ent->d_name[0] != '.')
+			count++;
 	}
-	free(arg_opt);
-	return (0);
+	closedir(dir);
+	return (count);
 }
