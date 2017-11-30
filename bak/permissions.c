@@ -6,33 +6,33 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 15:11:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 03:03:56 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 16:54:31 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static char		get_file_type(const int mode)
+static char		gather_file_type(const int mode)
 {
-	if (FT_ISIFO(mode))
+	if ((mode & S_IFIFO) == S_IFIFO)
 		return ('p');
-	else if (FT_ISLNK(mode))
+	else if ((mode & S_IFLNK) == S_IFLNK)
 		return ('l');
-	else if (FT_ISCHR(mode))
+	else if ((mode & S_IFCHR) == S_IFCHR)
 		return ('c');
-	else if (FT_ISDIR(mode))
+	else if ((mode & S_IFDIR) == S_IFDIR)
 		return ('d');
-	else if (FT_ISBLK(mode))
+	else if ((mode & S_IFBLK) == S_IFBLK)
 		return ('b');
-	else if (FT_ISREG(mode))
+	else if ((mode & S_IFREG) == S_IFREG)
 		return ('-');
-	else if (FT_ISSOCK(mode))
+	else if ((mode & S_IFSOCK) == S_IFSOCK)
 		return ('s');
 	else
 		return ('-');
 }
 
-static char		get_exec_perm(const int mode, const int sid_mask,
+static char		gather_exec_perm(const int mode, const int sid_mask,
 		const int x_mask)
 {
 	if (mode & x_mask && mode & sid_mask)
@@ -45,7 +45,7 @@ static char		get_exec_perm(const int mode, const int sid_mask,
 		return ('-');
 }
 
-static char		get_exec_perm_oth(const int mode)
+static char		gather_exec_perm_oth(const int mode)
 {
 	if (mode & S_IXOTH && mode & S_ISVTX)
 		return ('t');
@@ -57,21 +57,21 @@ static char		get_exec_perm_oth(const int mode)
 		return ('-');
 }
 
-char			*get_permissions(const int mode)
+char			*gather_permissions(const int mode)
 {
 	char	*dst;
 
 	if ((dst = ft_strnew(10)) == 0)
 		return (0);
-	dst[0] = get_file_type(mode);
+	dst[0] = gather_file_type(mode);
 	dst[1] = (mode & S_IRUSR ? 'r' : '-');
 	dst[2] = (mode & S_IWUSR ? 'w' : '-');
-	dst[3] = get_exec_perm(mode, S_ISUID, S_IXUSR);
+	dst[3] = gather_exec_perm(mode, S_ISUID, S_IXUSR);
 	dst[4] = (mode & S_IRGRP ? 'r' : '-');
 	dst[5] = (mode & S_IWGRP ? 'w' : '-');
-	dst[6] = get_exec_perm(mode, S_ISGID, S_IXGRP);
+	dst[6] = gather_exec_perm(mode, S_ISGID, S_IXGRP);
 	dst[7] = (mode & S_IROTH ? 'r' : '-');
 	dst[8] = (mode & S_IWOTH ? 'w' : '-');
-	dst[9] = get_exec_perm_oth(mode);
+	dst[9] = gather_exec_perm_oth(mode);
 	return (dst);
 }

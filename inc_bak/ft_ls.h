@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 04:22:28 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 01:50:54 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,29 +23,8 @@
 # include <time.h>
 # include <uuid/uuid.h>
 
-# define FT_ISIFO(mode) ((mode & S_IFIFO) == S_IFIFO)
-# define FT_ISCHR(mode) ((mode & S_IFCHR) == S_IFCHR)
 # define FT_ISDIR(mode) ((mode & S_IFDIR) == S_IFDIR)
-# define FT_ISBLK(mode) ((mode & S_IFBLK) == S_IFBLK)
-# define FT_ISREG(mode) ((mode & S_IFREG) == S_IFREG)
 # define FT_ISLNK(mode) ((mode & S_IFLNK) == S_IFLNK)
-# define FT_ISSOCK(mode) ((mode & S_IFSOCK) == S_IFSOCK)
-# define FT_ISWHT(mode) ((mode & S_IFWHT) == S_IFWHT)
-# define FT_ISUID(mode) ((mode & S_IFUID) == S_IFUID)
-# define FT_ISGID(mode) ((mode & S_IFGID) == S_IFGID)
-# define FT_ISVTX(mode) ((mode & S_IFVTX) == S_IFVTX)
-# define FT_IRWXU(mode) ((mode & S_IRWXU) == S_IRWXU)
-# define FT_IRUSR(mode) ((mode & S_IRUSR) == S_IRUSR)
-# define FT_IWUSR(mode) ((mode & S_IWUSR) == S_IWUSR)
-# define FT_IXUSR(mode) ((mode & S_IXUSR) == S_IXUSR)
-# define FT_IRWXG(mode) ((mode & S_IRWXG) == S_IRWXG)
-# define FT_IRGRP(mode) ((mode & S_IRGRP) == S_IRGRP)
-# define FT_IWGRP(mode) ((mode & S_IWGRP) == S_IWGRP)
-# define FT_IXGRP(mode) ((mode & S_IXGRP) == S_IXGRP)
-# define FT_IRWXO(mode) ((mode & S_IRWXO) == S_IRWXO)
-# define FT_IROTH(mode) ((mode & S_IROTH) == S_IROTH)
-# define FT_IWOTH(mode) ((mode & S_IWOTH) == S_IWOTH)
-# define FT_IXOTH(mode) ((mode & S_IXOTH) == S_IXOTH)
 
 typedef struct	s_arg_opt {
 	int		long_format;
@@ -55,19 +34,44 @@ typedef struct	s_arg_opt {
 	int		sort_time;
 	int		one_entry;
 	int		human;
-	int		follow_lnk;
 }				t_arg_opt;
 
 typedef struct	s_path {
 	char			*path;
 	char			*name;
-	struct stat		*stat;
+	struct s_path	**sub_path;
+	size_t			sub_path_len;
+	int				is_dir;
+	int				is_file;
+	int				is_link;
+	char			*permissions;
+	size_t			nlink;
+	char			*pw_name;
+	char			*gr_name;
+	size_t			size;
+	char			*mtime;
+	long			blocks;
 }				t_path;
 
-int		parse_arg(t_arg_opt *arg_opt, const char *arg);
+int		parse_arg(t_arg_opt *arg_opt, char *arg);
 int		usage(int code);
-void	print_error(int err, char *path);
 
-char	*get_permissions(const int mode);
+void	print_error(char *err);
+void	print_error2(char *err_s, char *err_e);
+void	print_error3(char *err_s, char *err_m, char *err_e);
+
+void	list_dirs_av(char **av, t_arg_opt *opt);
+void	list_dirs(t_path **paths, t_arg_opt *opt);
+void	list_files(t_path *path, t_arg_opt *opt);
+char	*gather_permissions(const int mode);
+
+int		count_files(size_t *dst, char *path, int hidden);
+int		check_file_exists(char *path);
+int		check_if_is_dir(char *path);
+
+t_path	*ft_init_path(char *dir_path, char *name);
+void	ft_set_path_info(t_path *path);
+int		ft_set_dir_subfiles(t_path *path, int set_info, int hidden);
+void	ft_sort_subpath(t_path *path, int (*cmp)(const char *, const char *));
 
 #endif

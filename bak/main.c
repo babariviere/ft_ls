@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 02:53:46 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 11:42:06 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ int		main(int ac, char **av)
 		else
 			break ;
 	}
-	free(arg_opt);
+	list_dirs_av(av + idx, arg_opt);
+	//free(arg_opt);
 	return (0);
 }

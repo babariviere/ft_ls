@@ -6,13 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:10:02 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 04:15:29 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 11:40:34 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static int	set_opt_from_arg(t_arg_opt *arg_opt, const char arg)
+static int	set_opt_from_arg(t_arg_opt *arg_opt, char arg)
 {
 	if (arg == 'l')
 		return (arg_opt->long_format = 1);
@@ -28,12 +28,10 @@ static int	set_opt_from_arg(t_arg_opt *arg_opt, const char arg)
 		return (arg_opt->one_entry = 1);
 	else if (arg == 'h')
 		return (arg_opt->human = 1);
-	else if (arg == 'L')
-		return (arg_opt->follow_lnk = 1);
 	return (0);
 }
 
-int			parse_arg(t_arg_opt *arg_opt, const char *arg)
+int			parse_arg(t_arg_opt *arg_opt, char *arg)
 {
 	size_t		idx;
 
@@ -43,7 +41,7 @@ int			parse_arg(t_arg_opt *arg_opt, const char *arg)
 	while (arg[idx])
 	{
 		if (set_opt_from_arg(arg_opt, arg[idx]) == 0)
-			exit(ft_puterr(1, ft_strjoin("ls: illegal option -- ",
+			exit(ft_puterr(1, ft_strjoin("ft_ls: illegal option -- ",
 							ft_strsub(arg, idx, 1))));
 		idx++;
 	}
