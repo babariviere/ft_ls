@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/29 20:10:46 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/29 20:26:07 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int		check_if_is_dir(char *path);
 
 t_path	*ft_init_path(char *dir_path, char *name);
 void	ft_set_path_info(t_path *path);
-int		ft_set_dir_subfiles(t_path *path, int rec, int set_info, int hidden, int depth);
+int		ft_set_dir_subfiles(t_path *path, int set_info, int hidden);
 void	ft_sort_subpath(t_path *path, int (*cmp)(const char *, const char *));
 
 #endif

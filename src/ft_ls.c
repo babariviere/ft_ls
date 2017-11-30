@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 12:38:52 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/29 20:09:08 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 00:58:45 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,8 @@ void	list_files(t_path *path, t_arg_opt *opt)
 	size_t			total_blocks;
 
 	if (path == 0)
+		return ;
+	if (path->sub_path_len <= 0)
 		return ;
 	if (path->path[ft_strlen(path->path) - 1] != '/')
 		dir_path = ft_strjoin(path->path, "/");
@@ -105,8 +107,7 @@ void	list_dir(t_path *path, t_arg_opt *opt, int start, int is_printed)
 	}
 	if (opt->long_format)
 		ft_set_path_info(path);
-	if (ft_set_dir_subfiles(path, opt->recursive, opt->long_format,
-				opt->hidden, 1) == -1)
+	if (ft_set_dir_subfiles(path, opt->long_format, opt->hidden) == -1)
 	{
 		print_error3(path->path, ": ", strerror(errno));
 		return ;
@@ -136,6 +137,15 @@ void	list_dir(t_path *path, t_arg_opt *opt, int start, int is_printed)
 			idx++;
 		}
 	}
+	if (opt->long_format)
+	{
+		free(path->mtime);
+		free(path->permissions);
+		free(path->pw_name);
+		free(path->gr_name);
+	}
+	free(path->sub_path);
+	free(path->name);
 	free(path);
 }
 

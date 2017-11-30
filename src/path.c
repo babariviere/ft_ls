@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/27 09:55:42 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/29 20:12:54 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 00:53:40 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,12 @@ void	ft_set_path_info(t_path *path)
 	path->nlink = path_stat.st_nlink;
 	pwd = getpwuid(path_stat.st_uid);
 	if (pwd)
-		path->pw_name = pwd->pw_name;
+		path->pw_name = ft_strdup(pwd->pw_name);
 	else
 		path->pw_name = ft_itoa(path_stat.st_uid);
 	grp = getgrgid(path_stat.st_gid);
 	if (grp)
-		path->gr_name = grp->gr_name;
+		path->gr_name = ft_strdup(grp->gr_name);
 	else
 		path->gr_name = ft_itoa(path_stat.st_gid);
 	path->size = path_stat.st_size;
@@ -69,19 +69,19 @@ void	ft_set_path_info(t_path *path)
 	path->mtime = time_str;
 }
 
-int		ft_set_dir_subfiles(t_path *path, int recursive, int set_info, int hidden, int depth)
+int		ft_set_dir_subfiles(t_path *path, int set_info, int hidden)
 {
 	DIR				*dir;
 	struct dirent	*ent;
 	size_t			idx;
+	size_t			len;
 
-	if (path == 0)
+	if (path == 0 || !path->is_dir)
 		return (0);
-	if (!path->is_dir)
-		return (0);
-	if (count_files(&path->sub_path_len, path->path, hidden) == -1)
+	len = 0;
+	if (count_files(&len, path->path, hidden) == -1)
 		return (-1);
-	path->sub_path_len += hidden * 2;
+	path->sub_path_len = len + hidden * 2;
 	if (path->sub_path_len == 0 || (path->sub_path = ft_memalloc(sizeof(t_path *) *
 				(path->sub_path_len + 1))) == 0)
 		return (0);
@@ -89,15 +89,12 @@ int		ft_set_dir_subfiles(t_path *path, int recursive, int set_info, int hidden, 
 	if ((dir = opendir(path->path)) == 0)
 		return (-1);
 	idx = 0;
-	depth--;
 	while ((ent = readdir(dir)))
 	{
 		if ((ent->d_name[0] == '.' && hidden) || ent->d_name[0] != '.')
 		{
 			if ((path->sub_path[idx] = ft_init_path(path->path, ent->d_name)) == 0)
 				return (0);
-			if (recursive && !(ft_strequ(ent->d_name, ".") || ft_strequ(ent->d_name, "..")) && depth >= 0)
-				ft_set_dir_subfiles(path->sub_path[idx], recursive, set_info, hidden, depth);
 			if (set_info)
 				ft_set_path_info(path->sub_path[idx]);
 			idx++;
