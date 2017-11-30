@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:15:16 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 06:49:50 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ int		main(int ac, char **av)
 	}
 	t_path	*path = ft_init_path(0, ".", opt->follow_lnk);
 	t_path	**spath = ft_get_subpath(path->path, opt->follow_lnk, opt->hidden);
+	list_files(spath, opt);
 	idx = 0;
 	while (spath[idx])
 	{
-		ft_putendl(spath[idx]->name);
 		ft_free_path(spath + idx);
 		idx++;
 	}

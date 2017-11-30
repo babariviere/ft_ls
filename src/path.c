@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:38:03 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 06:54:36 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,28 @@ t_path		**ft_get_subpath(const char *path, int follow_lnk, int hidden)
 	spath[idx] = 0;
 	closedir(dir);
 	return (spath);
+}
+
+void			ft_sort_subpath(t_path **paths, int (*cmp)(const char *, const char *))
+{
+	size_t		idx;
+	size_t		sub_idx;
+
+	if (paths == 0)
+		return ;
+	idx = 0;
+	while (paths[idx])
+	{
+		sub_idx = idx + 1;
+		while (paths[sub_idx])
+		{
+			if (cmp(paths[idx]->name, paths[sub_idx]->name) > 0)
+				ft_swap_ptr((void**)(paths + idx),
+						(void**)(paths + sub_idx));
+			sub_idx++;
+		}
+		idx++;
+	}
 }
 
 void		ft_free_path(t_path **path)

@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:10:02 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:12:05 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 07:03:03 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,13 @@ static int	set_arg_opt_from_arg(t_arg_opt *opt, const char arg)
 	else if (arg == 'a')
 		return (opt->hidden = 1);
 	else if (arg == 'r')
-		return ((opt->sort = FT_SORT_REV) == FT_SORT_REV);
+		return ((opt->sort |= FT_SORT_REV) > 0);
 	else if (arg == 't')
-		return (opt->sort = (opt->sort & FT_SORT_REV) | FT_SORT_TTIME);
+		return (opt->sort = (opt->sort & FT_SORT_REV) | FT_SORT_MTIME);
+	else if (arg == 'u')
+		return (opt->sort = (opt->sort & FT_SORT_REV) | FT_SORT_ATIME);
+	else if (arg == 'U')
+		return (opt->sort = (opt->sort & FT_SORT_REV) | FT_SORT_CTIME);
 	else if (arg == '1')
 		return (opt->one_entry = 1);
 	else if (arg == 'h')
