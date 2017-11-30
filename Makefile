@@ -33,6 +33,10 @@ debug: $(NAME_DBG)
 leaks: $(NAME_DBG)
 	@valgrind --leak-check=full --track-origins=yes $(NAME_DBG)
 
+norme: $(SRC)
+	@norminette $(SRC)
+	@norminette include/ft_ls.h
+
 clean:
 	@make -C libft/ clean
 	@rm -rf obj

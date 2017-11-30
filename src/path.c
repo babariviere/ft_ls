@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 06:16:47 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 06:38:03 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ static char	*ft_concat_path(const char *dir_path, const char *name)
 	return (tmp2);
 }
 
-t_path		*ft_init_path(const char *dir_path, const char *name, int follow_lnk)
+t_path		*ft_init_path(const char *dir_path, const char *name,
+		int follow_lnk)
 {
 	t_path		*path;
 	int			res;
