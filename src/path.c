@@ -6,13 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 04:34:16 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 06:06:30 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static char	*ft_concat_path(char *dir_path, char *name)
+static char	*ft_concat_path(const char *dir_path, const char *name)
 {
 	char	*tmp;
 	char	*tmp2;
@@ -31,7 +31,7 @@ static char	*ft_concat_path(char *dir_path, char *name)
 	return (tmp2);
 }
 
-t_path		*ft_init_path(char *dir_path, char *name, int follow_lnk)
+t_path		*ft_init_path(const char *dir_path, const char *name, int follow_lnk)
 {
 	t_path		*path;
 	int			res;
@@ -43,9 +43,9 @@ t_path		*ft_init_path(char *dir_path, char *name, int follow_lnk)
 	if ((path->stat = malloc(sizeof(struct stat))) == 0)
 		return (0);
 	if (follow_lnk)
-		res = stat(path->path, &path->stat);
+		res = stat(path->path, path->stat);
 	else
-		res = lstat(path->path, &path->stat);
+		res = lstat(path->path, path->stat);
 	if (res < 0)
 	{
 		print_error(res, path->path);
@@ -54,15 +54,41 @@ t_path		*ft_init_path(char *dir_path, char *name, int follow_lnk)
 	return (path);
 }
 
+t_path		**ft_get_subpath(const char *path, int follow_lnk, int hidden)
+{
+	DIR				*dir;
+	struct dirent	*ent;
+	t_path			**spath;
+	size_t			idx;
+
+	if (path == 0)
+		return (0);
+	if ((spath = ft_memalloc(sizeof(t_path *) *
+					count_files(path, hidden))) == 0)
+		return (0);
+	if ((dir = opendir(path)) == 0)
+		return (0);
+	idx = 0;
+	while ((ent = readdir(dir)))
+	{
+		if ((ent->d_name[0] == '.' && hidden)
+				|| ent->d_name[0] != '.')
+			spath[idx++] = ft_init_path(path, ent->d_name, follow_lnk);
+	}
+	spath[idx] = 0;
+	closedir(dir);
+	return (spath);
+}
+
 void		ft_free_path(t_path **path)
 {
 	if (path == 0 || *path == 0)
 		return ;
-	if (path->path)
-		ft_strdel(&path->path);
-	if (path->name)
-		ft_strdel(&path->path);
-	if (path->stat)
-		ft_memdel((void **)&path->stat);
+	if ((*path)->path)
+		ft_strdel(&(*path)->path);
+	if ((*path)->name)
+		ft_strdel(&(*path)->path);
+	if ((*path)->stat)
+		ft_memdel((void **)&(*path)->stat);
 	ft_memdel((void **)path);
 }

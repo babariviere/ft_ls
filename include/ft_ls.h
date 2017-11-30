@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 04:36:39 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 06:11:41 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,16 @@
 # define FT_IWOTH(mode) ((mode & S_IWOTH) == S_IWOTH)
 # define FT_IXOTH(mode) ((mode & S_IXOTH) == S_IXOTH)
 
+# define FT_NO_SORT		(1 < 0)
+# define FT_SORT_REV	(1 < 1)
+# define FT_SORT_MTIME	(1 < 2)
+# define FT_SORT_TTIME	(1 < 3)
+
 typedef struct	s_arg_opt {
 	int		long_format;
 	int		recursive;
 	int		hidden;
-	int		reverse;
-	int		sort_time;
+	int		sort;
 	int		one_entry;
 	int		human;
 	int		follow_lnk;
@@ -70,5 +74,9 @@ void	print_error(int err, const char *path);
 
 char	*get_permissions(const int mode);
 int		count_files(const char *path, int hidden);
+
+t_path	*ft_init_path(const char *d_path, const char *name, int follow_lnk);
+t_path	**ft_get_subpath(const char *path, int follow_lnk, int hidden);
+void	ft_free_path(t_path **path);
 
 #endif
