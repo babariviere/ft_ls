@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/01 02:09:16 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/01 03:22:21 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,12 @@ void	list_dir(char *dir, t_arg_opt *opt)
 	if (path == 0)
 		return ;
 	spath = ft_get_subpath(path->path, opt->follow_lnk, opt->hidden);
+	if (spath == 0)
+	{
+		spath = ft_memalloc(sizeof(t_path *) * 2);
+		spath[0] = ft_init_path(0, dir, opt->follow_lnk);
+		spath[1] = 0;
+	}
 	list_files(spath, opt);
 	idx = 0;
 	while (spath[idx])

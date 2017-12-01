@@ -6,13 +6,14 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 08:28:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 08:42:27 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/01 03:13:28 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void			ft_sort_subpath(t_path **paths, int (*cmp)(const char *, const char *))
+void			ft_sort_subpath(t_path **paths,
+		int (*cmp)(const char *, const char *))
 {
 	size_t		idx;
 	size_t		sub_idx;
