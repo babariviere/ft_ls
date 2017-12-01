@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 08:40:28 by briviere         ###   ########.fr       */
+/*   Updated: 2017/11/30 23:12:52 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,10 @@ int		usage(int code);
 void	print_error(int err, const char *path);
 
 char	*get_permissions(const int mode);
+char	*get_pw_name(uid_t uid);
+char	*get_gr_name(uid_t uid);
+char	*get_file_time(struct timespec time);
+
 int		count_files(const char *path, int hidden);
 
 t_path	*ft_init_path(const char *d_path, const char *name, int follow_lnk);
@@ -86,5 +90,7 @@ void	ft_sort_subpath_mtime(t_path **path, int rev);
 void	ft_sort_subpath_ctime(t_path **path, int rev);
 
 void	list_files(t_path **path, t_arg_opt *opt);
+
+void	print_list_format(t_path **path, t_arg_opt *opt);
 
 #endif

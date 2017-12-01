@@ -6,11 +6,43 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 08:41:59 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/01 02:09:16 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+
+void	list_dir(char *dir, t_arg_opt *opt)
+{
+	t_path	*path;
+	t_path	**spath;
+	int		idx;
+
+	path = ft_init_path(0, dir, opt->follow_lnk);
+	if (path == 0)
+		return ;
+	spath = ft_get_subpath(path->path, opt->follow_lnk, opt->hidden);
+	list_files(spath, opt);
+	idx = 0;
+	while (spath[idx])
+	{
+		ft_free_path(spath + idx);
+		idx++;
+	}
+	free(spath);
+	ft_free_path(&path);
+}
+
+void	list_av(char **av, t_arg_opt *opt)
+{
+	if (*av == 0)
+		list_dir(".", opt);
+	while (*av)
+	{
+		list_dir(*av, opt);
+		av++;
+	}
+}
 
 int		main(int ac, char **av)
 {
@@ -37,17 +69,7 @@ int		main(int ac, char **av)
 		else
 			break ;
 	}
-	t_path	*path = ft_init_path(0, ".", opt->follow_lnk);
-	t_path	**spath = ft_get_subpath(path->path, opt->follow_lnk, opt->hidden);
-	list_files(spath, opt);
-	idx = 0;
-	while (spath[idx])
-	{
-		ft_free_path(spath + idx);
-		idx++;
-	}
-	free(spath);
-	ft_free_path(&path);
+	list_av(av + idx, opt);
 	free(opt);
 	return (0);
 }
