@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/02 15:12:47 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/02 15:21:51 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,13 @@
 static t_fmt	*path_to_fmt(t_path *path, t_arg_opt *opt)
 {
 	t_fmt		*fmt;
-	char			buf[1024];
-	size_t			r;
+	char		buf[1024];
+	size_t		r;
 
-	if ((fmt = ft_init_fmt(8 +
-					(FT_ISLNK(path->stat->st_mode) * 2))) == 0)
+	if ((fmt = ft_init_fmt(8 + (FT_ISLNK(path->stat->st_mode) * 2))) == 0)
 		return (0);
 	ft_add_fmt_str(fmt, get_permissions(path->stat->st_mode), 0);
-	ft_add_fmt_str(fmt, get_xattr_symbol(path->path, opt->follow_lnk), 1); // TODO: extended attributes
+	ft_add_fmt_str(fmt, get_xattr_symbol(path->path, opt->follow_lnk), 1);
 	ft_add_fmt_str(fmt, ft_itoa(path->stat->st_nlink), 1);
 	ft_add_fmt_str(fmt, get_pw_name(path->stat->st_uid), 2);
 	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 + opt->human);
@@ -42,7 +41,7 @@ static t_fmt	*path_to_fmt(t_path *path, t_arg_opt *opt)
 	return (fmt);
 }
 
-static void			print_total_blocks(t_path **path, size_t total_blk,
+static void		print_total_blocks(t_path **path, size_t total_blk,
 		size_t tab_len)
 {
 	char	*tmp;
@@ -55,30 +54,17 @@ static void			print_total_blocks(t_path **path, size_t total_blk,
 	free(tmp);
 }
 
-void				print_list_format(t_path **path, t_arg_opt *opt)
+static void		calibrate_list_fmt(t_fmt **fmts)
 {
-	t_fmt		**fmts;
-	size_t		idx;
-	size_t		total_blk;
-	size_t		tab_len;
-
-	if (path == 0 || *path == 0)
-		return ;
-	tab_len = ft_tablen(path, sizeof(t_path *));
-	if ((fmts = ft_memalloc(sizeof(t_fmt *) * (tab_len+ 1))) == 0)
-		return ;
-	idx = 0;
-	total_blk = 0;
-	while (idx < tab_len)
-	{
-		fmts[idx] = path_to_fmt(path[idx], opt);
-		total_blk += path[idx]->stat->st_blocks;
-		idx++;
-	}
 	ft_calibrate_fmt(fmts, 2, -1);
 	ft_calibrate_fmt_range(fmts, 3, 4, 0);
 	ft_calibrate_fmt(fmts, 5, -1);
-	print_total_blocks(path, total_blk, tab_len);
+}
+
+static void		print_and_free_fmts(t_fmt **fmts, size_t tab_len)
+{
+	size_t		idx;
+
 	idx = 0;
 	while (idx < tab_len)
 	{
@@ -88,4 +74,29 @@ void				print_list_format(t_path **path, t_arg_opt *opt)
 		ft_putchar('\n');
 	}
 	free(fmts);
+}
+
+void			print_list_format(t_path **path, t_arg_opt *opt)
+{
+	t_fmt		**fmts;
+	size_t		idx;
+	size_t		total_blk;
+	size_t		tab_len;
+
+	if (path == 0 || *path == 0)
+		return ;
+	tab_len = ft_tablen(path, sizeof(t_path *));
+	if ((fmts = ft_memalloc(sizeof(t_fmt *) * (tab_len + 1))) == 0)
+		return ;
+	idx = 0;
+	total_blk = 0;
+	while (idx < tab_len)
+	{
+		fmts[idx] = path_to_fmt(path[idx], opt);
+		total_blk += path[idx]->stat->st_blocks;
+		idx++;
+	}
+	calibrate_list_fmt(fmts);
+	print_total_blocks(path, total_blk, tab_len);
+	print_and_free_fmts(fmts, tab_len);
 }
