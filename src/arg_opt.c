@@ -6,11 +6,23 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:10:02 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 08:39:04 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/02 15:25:26 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+
+
+t_arg_opt	*init_opt(void)
+{
+	t_arg_opt	*opt;
+
+	if ((opt = ft_memalloc(sizeof(t_arg_opt))) == 0)
+		return (0);
+	opt->one_entry = 1;
+	opt->sort = FT_SORT_NAME;
+	return (opt);
+}
 
 static int	set_arg_opt_from_arg(t_arg_opt *opt, const char arg)
 {

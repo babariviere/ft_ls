@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/02 15:16:36 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/02 15:25:54 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,28 +72,29 @@ typedef struct	s_path {
 	struct stat		*stat;
 }				t_path;
 
-int		parse_arg(t_arg_opt *arg_opt, const char *arg);
-int		usage(int code);
-void	print_error(int err, const char *path);
+t_arg_opt	*init_opt(void);
+int			parse_arg(t_arg_opt *arg_opt, const char *arg);
+int			usage(int code);
+void		print_error(int err, const char *path);
 
-char	*get_permissions(const int mode);
-char	*get_pw_name(uid_t uid);
-char	*get_gr_name(uid_t uid);
-char	*get_file_time(struct timespec time);
-char	*get_xattr_symbol(const char *path, int follow_lnk);
+char		*get_permissions(const int mode);
+char		*get_pw_name(uid_t uid);
+char		*get_gr_name(uid_t uid);
+char		*get_file_time(struct timespec time);
+char		*get_xattr_symbol(const char *path, int follow_lnk);
 
-int		count_files(const char *path, int hidden);
+int			count_files(const char *path, int hidden);
 
-t_path	*ft_init_path(const char *d_path, const char *name, int follow_lnk);
-t_path	**ft_get_subpath(const char *path, int follow_lnk, int hidden);
-void	ft_free_path(t_path **path);
-void	ft_sort_subpath(t_path **path, int (*cmp)(const char *, const char *));
-void	ft_sort_subpath_atime(t_path **path, int rev);
-void	ft_sort_subpath_mtime(t_path **path, int rev);
-void	ft_sort_subpath_ctime(t_path **path, int rev);
+t_path		*ft_init_path(const char *d_path, const char *name, int follow_lnk);
+t_path		**ft_get_subpath(const char *path, int follow_lnk, int hidden);
+void		ft_free_path(t_path **path);
+void		ft_sort_subpath(t_path **path, int (*cmp)(const char *, const char *));
+void		ft_sort_subpath_atime(t_path **path, int rev);
+void		ft_sort_subpath_mtime(t_path **path, int rev);
+void		ft_sort_subpath_ctime(t_path **path, int rev);
 
-void	list_files(t_path **path, t_arg_opt *opt);
+void		list_files(t_path **path, t_arg_opt *opt);
 
-void	print_list_format(t_path **path, t_arg_opt *opt);
+void		print_list_format(t_path **path, t_arg_opt *opt);
 
 #endif
