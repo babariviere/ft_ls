@@ -6,13 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/01 03:19:23 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/02 15:12:47 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static t_fmt	*path_to_fmt(t_path *path, int human)
+static t_fmt	*path_to_fmt(t_path *path, t_arg_opt *opt)
 {
 	t_fmt		*fmt;
 	char			buf[1024];
@@ -22,11 +22,11 @@ static t_fmt	*path_to_fmt(t_path *path, int human)
 					(FT_ISLNK(path->stat->st_mode) * 2))) == 0)
 		return (0);
 	ft_add_fmt_str(fmt, get_permissions(path->stat->st_mode), 0);
-	ft_add_fmt_str(fmt, ft_strdup(" "), 1); // TODO: extended attributes
+	ft_add_fmt_str(fmt, get_xattr_symbol(path->path, opt->follow_lnk), 1); // TODO: extended attributes
 	ft_add_fmt_str(fmt, ft_itoa(path->stat->st_nlink), 1);
 	ft_add_fmt_str(fmt, get_pw_name(path->stat->st_uid), 2);
-	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 + human);
-	if (human)
+	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 + opt->human);
+	if (opt->human)
 		ft_add_fmt_str(fmt, ft_stoa_human(path->stat->st_size, 1), 1);
 	else
 		ft_add_fmt_str(fmt, ft_itoa(path->stat->st_size), 1);
@@ -71,11 +71,13 @@ void				print_list_format(t_path **path, t_arg_opt *opt)
 	total_blk = 0;
 	while (idx < tab_len)
 	{
-		fmts[idx] = path_to_fmt(path[idx], opt->human);
+		fmts[idx] = path_to_fmt(path[idx], opt);
 		total_blk += path[idx]->stat->st_blocks;
 		idx++;
 	}
-	ft_calibrate_fmt_range(fmts, 2, 5, -1);
+	ft_calibrate_fmt(fmts, 2, -1);
+	ft_calibrate_fmt_range(fmts, 3, 4, 0);
+	ft_calibrate_fmt(fmts, 5, -1);
 	print_total_blocks(path, total_blk, tab_len);
 	idx = 0;
 	while (idx < tab_len)

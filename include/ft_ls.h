@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 23:12:52 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/02 15:16:36 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@
 # include <grp.h>
 # include "libft.h"
 # include <pwd.h>
+# include <sys/acl.h>
 # include <sys/stat.h>
 # include <sys/types.h>
+# include <sys/xattr.h>
 # include <time.h>
 # include <uuid/uuid.h>
 
@@ -78,6 +80,7 @@ char	*get_permissions(const int mode);
 char	*get_pw_name(uid_t uid);
 char	*get_gr_name(uid_t uid);
 char	*get_file_time(struct timespec time);
+char	*get_xattr_symbol(const char *path, int follow_lnk);
 
 int		count_files(const char *path, int hidden);
 
