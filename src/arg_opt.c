@@ -6,55 +6,48 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:10:02 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/05 08:30:13 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/05 15:40:57 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-
-t_arg_opt	*init_opt(void)
+static int	set_arg_opt_time(t_arg *opt, const char arg)
 {
-	t_arg_opt	*opt;
-
-	if ((opt = ft_memalloc(sizeof(t_arg_opt))) == 0)
-		return (0);
-	opt->one_entry = 1;
-	opt->sort = FT_SORT_NAME;
-	return (opt);
-}
-
-static int	set_arg_opt_from_arg(t_arg_opt *opt, const char arg)
-{
-	if (arg == 'l')
-		return (opt->long_format = 1);
-	else if (arg == 'R')
-		return (opt->recursive = 1);
-	else if (arg == 'a')
-		return (opt->hidden = 1);
-	else if (arg == 'r')
-		return ((opt->sort |= FT_SORT_REV) > 0);
-	else if (arg == 't')
-		return (opt->sort = ((opt->sort & FT_SORT_REV) | FT_SORT_MTIME));
+	*opt = *opt & ~ARG_MTIME & ~ARG_CTIME & ~ARG_BTIME & ~ARG_ATIME;
+	if (arg == 't')
+		return (*opt |= ARG_SORT | ARG_SORT_TIME | ARG_MTIME);
 	else if (arg == 'u')
-		return (opt->sort = (opt->sort & FT_SORT_REV) | FT_SORT_ATIME);
+		return (*opt |= ARG_ATIME);
+	else if (arg == 'c')
+		return (*opt |= ARG_CTIME);
 	else if (arg == 'U')
-		return (opt->sort = (opt->sort & FT_SORT_REV) | FT_SORT_CTIME);
-	else if (arg == '1')
-		return (opt->one_entry = 1);
-	else if (arg == 'h')
-		return (opt->human = 1);
-	else if (arg == 'L')
-		return (opt->follow_lnk = 1);
-	else if (arg == 'f')
-	{
-		opt->hidden = 1;
-		return ((opt->sort = FT_NO_SORT) == FT_NO_SORT);
-	}
+		return (*opt |= ARG_BTIME);
 	return (0);
 }
 
-int			parse_arg(t_arg_opt *opt, const char *arg)
+static int	set_arg_opt_from_arg(t_arg *opt, const char arg)
+{
+	if (arg == 'l')
+		return (*opt |= ARG_LIST_FMT);
+	else if (arg == 'R')
+		return (*opt |= ARG_REC);
+	else if (arg == 'a')
+		return (*opt |= ARG_HIDDEN);
+	else if (arg == 'r')
+		return (*opt |= ARG_REV);
+	else if (arg == '1')
+		return (*opt |= ARG_ONE_ENT);
+	else if (arg == 'h')
+		return (*opt |= ARG_HUMAN);
+	else if (arg == 'L')
+		return (*opt |= ARG_FOLLOW_LNK);
+	else if (arg == 'f')
+		return (*opt = (*opt | ARG_HIDDEN) & ~ARG_SORT);
+	return (set_arg_opt_time(opt, arg));
+}
+
+int			parse_arg(t_arg *opt, const char *arg)
 {
 	size_t		idx;
 

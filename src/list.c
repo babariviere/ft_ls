@@ -6,35 +6,37 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 04:47:06 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 23:21:30 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/05 16:48:55 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	make_sort(t_path **path, t_arg_opt *opt)
+void	make_sort(t_path **path, t_arg opt)
 {
-	if ((opt->sort & FT_SORT_NAME) == FT_SORT_NAME)
-		ft_sort_subpath(path, ((opt->sort & FT_SORT_REV) == FT_SORT_REV ?
+	if (HAS_FLAG(opt, ARG_ATIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+		ft_sort_subpath_atime(path, HAS_FLAG(opt, ARG_REV));
+	else if (HAS_FLAG(opt, ARG_CTIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+		ft_sort_subpath_ctime(path, HAS_FLAG(opt, ARG_REV));
+	else if (HAS_FLAG(opt, ARG_MTIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+		ft_sort_subpath_mtime(path, HAS_FLAG(opt, ARG_REV));
+	else if (HAS_FLAG(opt, ARG_BTIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+		ft_sort_subpath_btime(path, HAS_FLAG(opt, ARG_REV));
+	else if (HAS_FLAG(opt, ARG_SORT))
+		ft_sort_subpath(path, (HAS_FLAG(opt, ARG_REV) ?
 					ft_strcmp_rev : ft_strcmp));
-	else if ((opt->sort & FT_SORT_ATIME) == FT_SORT_ATIME)
-		ft_sort_subpath_atime(path, (opt->sort & FT_SORT_REV) == FT_SORT_REV);
-	else if ((opt->sort & FT_SORT_MTIME) == FT_SORT_MTIME)
-		ft_sort_subpath_mtime(path, (opt->sort & FT_SORT_REV) == FT_SORT_REV);
-	else if ((opt->sort & FT_SORT_CTIME) == FT_SORT_CTIME)
-		ft_sort_subpath_ctime(path, (opt->sort & FT_SORT_REV) == FT_SORT_REV);
 }
 
-void	list_files(t_path **path, t_arg_opt *opt)
+void	list_files(t_path **path, t_arg opt)
 {
 	size_t	idx;
 
 	if (path == 0)
 		return ;
 	make_sort(path, opt);
-	if (opt->long_format)
+	if (HAS_FLAG(opt, ARG_LIST_FMT))
 		print_list_format(path, opt);
-	else if (opt->one_entry)
+	else if (HAS_FLAG(opt, ARG_ONE_ENT))
 	{
 		idx = 0;
 		while (path[idx])

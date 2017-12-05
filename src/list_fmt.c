@@ -6,13 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/02 15:21:51 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/05 15:52:51 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-static t_fmt	*path_to_fmt(t_path *path, t_arg_opt *opt)
+static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
 {
 	t_fmt		*fmt;
 	char		buf[1024];
@@ -21,15 +21,23 @@ static t_fmt	*path_to_fmt(t_path *path, t_arg_opt *opt)
 	if ((fmt = ft_init_fmt(8 + (FT_ISLNK(path->stat->st_mode) * 2))) == 0)
 		return (0);
 	ft_add_fmt_str(fmt, get_permissions(path->stat->st_mode), 0);
-	ft_add_fmt_str(fmt, get_xattr_symbol(path->path, opt->follow_lnk), 1);
+	ft_add_fmt_str(fmt, get_xattr_symbol(path->path,
+				HAS_FLAG(opt, ARG_FOLLOW_LNK)), 1);
 	ft_add_fmt_str(fmt, ft_itoa(path->stat->st_nlink), 1);
 	ft_add_fmt_str(fmt, get_pw_name(path->stat->st_uid), 2);
-	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 + opt->human);
-	if (opt->human)
+	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 + HAS_FLAG(opt, ARG_HUMAN));
+	if (HAS_FLAG(opt, ARG_HUMAN))
 		ft_add_fmt_str(fmt, ft_stoa_human(path->stat->st_size, 1), 1);
 	else
 		ft_add_fmt_str(fmt, ft_itoa(path->stat->st_size), 1);
-	ft_add_fmt_str(fmt, get_file_time(path->stat->st_mtimespec), 1);
+	if (HAS_FLAG(opt, ARG_CTIME))
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_ctime), 1);
+	else if (HAS_FLAG(opt, ARG_ATIME))
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_atime), 1);
+	else if (HAS_FLAG(opt, ARG_BTIME))
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_birthtime), 1);
+	else
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_mtime), 1);
 	ft_add_fmt_str(fmt, ft_strdup(path->name), 1);
 	if (FT_ISLNK(path->stat->st_mode))
 	{
@@ -76,7 +84,7 @@ static void		print_and_free_fmts(t_fmt **fmts, size_t tab_len)
 	free(fmts);
 }
 
-void			print_list_format(t_path **path, t_arg_opt *opt)
+void			print_list_format(t_path **path, t_arg opt)
 {
 	t_fmt		**fmts;
 	size_t		idx;
