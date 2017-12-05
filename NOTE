@@ -4,3 +4,4 @@
 - ls -R => file + (\n dir: \n files)*
 - Move formatted to LIBFT
 - Create struct to store subpath
+- When older than > 6 month show year
