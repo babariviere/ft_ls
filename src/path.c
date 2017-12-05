@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 08:28:33 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/05 08:49:09 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ t_path		**ft_get_subpath(const char *path, int follow_lnk, int hidden)
 	if (path == 0)
 		return (0);
 	if ((spath = ft_memalloc(sizeof(t_path *) *
-					count_files(path, hidden))) == 0)
+					(count_files(path, hidden) + 1))) == 0)
 		return (0);
 	if ((dir = opendir(path)) == 0)
 		return (0);

@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 19:16:25 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 23:28:54 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/05 08:34:16 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ char	*get_file_time(struct timespec time)
 
 	ftime = time.tv_sec;
 	time_str = ft_strsub(ctime(&ftime), 4, 13);
+	if (time_str == 0)
+		return (0);
 	time_str[12] = 0;
 	return (time_str);
 }

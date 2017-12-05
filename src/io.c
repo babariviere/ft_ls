@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 04:35:54 by briviere          #+#    #+#             */
-/*   Updated: 2017/11/30 04:51:11 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/05 08:39:06 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int		count_files(const char *path, int hidden)
 	count = 0;
 	while ((ent = readdir(dir)))
 	{
-		if ((ent->d_name[0] == '.' && !hidden) || ent->d_name[0] != '.')
+		if ((ent->d_name[0] == '.' && hidden) || ent->d_name[0] != '.')
 			count++;
 	}
 	closedir(dir);

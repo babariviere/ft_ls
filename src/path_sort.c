@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 08:28:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/01 03:13:28 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/02 15:33:23 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,11 @@ void			ft_sort_subpath_atime(t_path **paths, int rev)
 		sub_idx = idx + 1;
 		while (paths[sub_idx])
 		{
-			if (!rev && paths[idx]->stat->st_atime >
+			if (!rev && paths[idx]->stat->st_atime <
 					paths[sub_idx]->stat->st_atime)
 				ft_swap_ptr((void**)(paths + idx),
 						(void**)(paths + sub_idx));
-			else if (rev && paths[idx]->stat->st_atime <
+			else if (rev && paths[idx]->stat->st_atime >
 					paths[sub_idx]->stat->st_atime)
 				ft_swap_ptr((void**)(paths + idx),
 						(void**)(paths + sub_idx));
@@ -75,11 +75,11 @@ void			ft_sort_subpath_mtime(t_path **paths, int rev)
 		sub_idx = idx + 1;
 		while (paths[sub_idx])
 		{
-			if (!rev && paths[idx]->stat->st_mtime >
+			if (!rev && paths[idx]->stat->st_mtime <
 					paths[sub_idx]->stat->st_mtime)
 				ft_swap_ptr((void**)(paths + idx),
 						(void**)(paths + sub_idx));
-			else if (rev && paths[idx]->stat->st_mtime <
+			else if (rev && paths[idx]->stat->st_mtime >
 					paths[sub_idx]->stat->st_mtime)
 				ft_swap_ptr((void**)(paths + idx),
 						(void**)(paths + sub_idx));
@@ -102,11 +102,11 @@ void			ft_sort_subpath_ctime(t_path **paths, int rev)
 		sub_idx = idx + 1;
 		while (paths[sub_idx])
 		{
-			if (!rev && paths[idx]->stat->st_ctime >
+			if (!rev && paths[idx]->stat->st_ctime <
 					paths[sub_idx]->stat->st_ctime)
 				ft_swap_ptr((void**)(paths + idx),
 						(void**)(paths + sub_idx));
-			else if (rev && paths[idx]->stat->st_ctime <
+			else if (rev && paths[idx]->stat->st_ctime >
 					paths[sub_idx]->stat->st_ctime)
 				ft_swap_ptr((void**)(paths + idx),
 						(void**)(paths + sub_idx));
