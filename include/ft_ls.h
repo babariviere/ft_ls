@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 13:24:49 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 16:39:27 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,8 @@ char		*get_xattr_symbol(const char *path, int follow_lnk);
 
 int			count_files(const char *path, int hidden);
 
-t_path		*ft_init_path(const char *d_path, const char *name, int follow_lnk);
+t_path		*ft_init_path(const char *d_path, const char *name,
+		int follow_lnk);
 t_path		**ft_get_subpath(const char *path, int follow_lnk, int hidden);
 void		ft_free_path(t_path **path);
 void		ft_swap_if_not_gr(t_path **path1, t_path **path2, t_arg opt,
@@ -105,5 +106,7 @@ void		ft_sort_subpath_btime(t_path **path, int rev);
 void		list_files(t_path **path, t_arg arg);
 
 void		print_list_format(t_path **path, t_arg arg);
+void		print_total_blocks(t_path **path, size_t total_blk,
+		size_t tab_len);
 
 #endif

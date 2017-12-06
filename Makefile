@@ -1,14 +1,14 @@
 NAME=ft_ls
 NAME_DBG=ft_lsdbg
 SRC_NAME=main.c arg_opt.c usage.c permissions.c list.c io.c path.c error.c path_sort.c list_fmt.c\
-		stat.c ext_attr.c path_sort2.c
+		stat.c ext_attr.c path_sort2.c list_fmt2.c
 SRC=$(addprefix src/, $(SRC_NAME))
 OBJ=$(patsubst src/%.c, obj/%.o, $(SRC))
 OBJ_DBG=$(patsubst src/%.c, obj_dbg/%.o, $(SRC))
 CC=clang
-LIBS=-Llibft/ -lft
+LIBS=-Llibft/ -lft -L/Users/briviere/.brew/lib -lprofiler -ltcmalloc
 LIBS_DBG=-Llibft -lftdbg
-CFLAGS=-Wall -Werror -Wextra -Iinclude -Ilibft/include
+CFLAGS=-Wall -Werror -Wextra -Iinclude -Ilibft/include -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
 
 all: $(NAME)
 
