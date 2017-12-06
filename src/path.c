@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/05 08:49:09 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 11:28:00 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,21 @@ t_path		*ft_init_path(const char *dir_path, const char *name,
 	path->name = ft_strdup(name);
 	if ((path->stat = malloc(sizeof(struct stat))) == 0)
 		return (0);
+	if ((path->fstat = malloc(sizeof(struct stat))) == 0)
+		return (0);
 	if (follow_lnk)
 		res = stat(path->path, path->stat);
 	else
 		res = lstat(path->path, path->stat);
 	if (res < 0)
+		res = lstat(path->path, path->stat);
+	if (res < 0)
 	{
-		print_error(res, path->path);
+		ft_putstr("ls: ");
+		perror(path->path);
 		return (0);
 	}
+	res = stat(path->path, path->fstat);
 	return (path);
 }
 
@@ -91,5 +97,7 @@ void		ft_free_path(t_path **path)
 		ft_strdel(&(*path)->name);
 	if ((*path)->stat)
 		ft_memdel((void **)&(*path)->stat);
+	if ((*path)->fstat)
+		ft_memdel((void **)&(*path)->fstat);
 	ft_memdel((void **)path);
 }

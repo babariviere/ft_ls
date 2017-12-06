@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/05 16:48:09 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 11:25:45 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <grp.h>
 # include "libft.h"
 # include <pwd.h>
+# include <stdio.h>
 # include <sys/acl.h>
 # include <sys/stat.h>
 # include <sys/types.h>
@@ -72,6 +73,7 @@ typedef struct	s_path {
 	char			*path;
 	char			*name;
 	struct stat		*stat;
+	struct stat		*fstat;
 }				t_path;
 
 int			parse_arg(t_arg *opt, const char *arg);
@@ -91,6 +93,7 @@ t_path		**ft_get_subpath(const char *path, int follow_lnk, int hidden);
 void		ft_free_path(t_path **path);
 void		ft_swap_if_not_gr(t_path **path1, t_path **path2, t_arg opt,
 		int rev);
+void		ft_make_sort_paths(t_path **paths, t_arg opt);
 void		ft_sort_subpath(t_path **path, int (*cmp)
 		(const char *, const char *));
 void		ft_sort_subpath_atime(t_path **path, int rev);
