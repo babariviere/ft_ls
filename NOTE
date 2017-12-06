@@ -1,7 +1,0 @@
-- Multi-output 'len_file + 1'
-- The longest always set the len
-- ls -l => perm__t_login__group__size_month_day_hour:min_file
-- ls -R => file + (\n dir: \n files)*
-- Move formatted to LIBFT
-- Create struct to store subpath
-- When older than > 6 month show year
