@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 11:28:00 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 13:42:00 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 static char	*ft_concat_path(const char *dir_path, const char *name)
 {
 	char	*tmp;
-	char	*tmp2;
 	size_t	dir_len;
 
 	if (dir_path == 0)
@@ -25,10 +24,8 @@ static char	*ft_concat_path(const char *dir_path, const char *name)
 		return (ft_strdup(name));
 	else if (dir_path[dir_len - 1] == '/')
 		return (ft_strjoin(dir_path, name));
-	tmp = ft_strjoin(dir_path, "/");
-	tmp2 = ft_strjoin(tmp, name);
-	free(tmp);
-	return (tmp2);
+	tmp = ft_strjoin_sep(dir_path, "/", name);
+	return (tmp);
 }
 
 t_path		*ft_init_path(const char *dir_path, const char *name,
@@ -37,7 +34,7 @@ t_path		*ft_init_path(const char *dir_path, const char *name,
 	t_path		*path;
 	int			res;
 
-	if ((path = ft_memalloc(sizeof(t_path))) == 0)
+	if ((path = malloc(sizeof(t_path))) == 0)
 		return (0);
 	path->path = ft_concat_path(dir_path, name);
 	path->name = ft_strdup(name);
@@ -70,7 +67,7 @@ t_path		**ft_get_subpath(const char *path, int follow_lnk, int hidden)
 
 	if (path == 0)
 		return (0);
-	if ((spath = ft_memalloc(sizeof(t_path *) *
+	if ((spath = malloc(sizeof(t_path *) *
 					(count_files(path, hidden) + 1))) == 0)
 		return (0);
 	if ((dir = opendir(path)) == 0)

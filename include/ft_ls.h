@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 11:25:45 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 13:24:49 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,7 @@ void		ft_swap_if_not_gr(t_path **path1, t_path **path2, t_arg opt,
 void		ft_make_sort_paths(t_path **paths, t_arg opt);
 void		ft_sort_subpath(t_path **path, int (*cmp)
 		(const char *, const char *));
+void		ft_sort_subpath_size(t_path **path, int rev);
 void		ft_sort_subpath_atime(t_path **path, int rev);
 void		ft_sort_subpath_mtime(t_path **path, int rev);
 void		ft_sort_subpath_ctime(t_path **path, int rev);

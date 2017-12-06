@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/05 15:52:51 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 13:43:26 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void			print_list_format(t_path **path, t_arg opt)
 	if (path == 0 || *path == 0)
 		return ;
 	tab_len = ft_tablen(path, sizeof(t_path *));
-	if ((fmts = ft_memalloc(sizeof(t_fmt *) * (tab_len + 1))) == 0)
+	if ((fmts = malloc(sizeof(t_fmt *) * (tab_len + 1))) == 0)
 		return ;
 	idx = 0;
 	total_blk = 0;
@@ -104,6 +104,7 @@ void			print_list_format(t_path **path, t_arg opt)
 		total_blk += path[idx]->stat->st_blocks;
 		idx++;
 	}
+	fmts[idx] = 0;
 	calibrate_list_fmt(fmts);
 	print_total_blocks(path, total_blk, tab_len);
 	print_and_free_fmts(fmts, tab_len);

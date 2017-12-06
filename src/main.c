@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 12:34:41 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 13:44:30 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void		list_dir(char *dir, t_arg arg)
 	}
 	if (!FT_ISDIR(path->fstat->st_mode))
 	{
-		spath = ft_memalloc(sizeof(t_path *) * 2);
+		spath = malloc(sizeof(t_path *) * 2);
 		spath[0] = ft_init_path(0, dir, HAS_FLAG(arg, ARG_FOLLOW_LNK));
 		spath[1] = 0;
 	}
@@ -67,7 +67,8 @@ void		print_files(t_path **paths, t_arg arg)
 		}
 		idx++;
 	}
-	files = ft_memalloc(sizeof(t_path *) * (sidx + 1));
+	files = malloc(sizeof(t_path *) * (sidx + 1));
+	files[0] = 0;
 	ft_memcpy(files, paths, sizeof(t_path *) * sidx);
 	files[sidx] = 0;
 	list_files(files, arg);

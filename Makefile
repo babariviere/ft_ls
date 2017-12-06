@@ -29,6 +29,8 @@ obj_dbg/%.o: src/%.c
 	$(CC) $(CFLAGS) -g -c -o $@ $<
 
 debug: $(NAME_DBG)
+
+lldb: $(NAME_DBG)
 	@lldb $(NAME_DBG)
 
 leaks: $(NAME_DBG)

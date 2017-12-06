@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 08:28:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 11:12:34 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 13:23:41 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,11 @@ void			ft_swap_if_not_gr(t_path **path1, t_path **path2,
 
 	res = (rev ? ft_strcmp_rev((*path1)->name, (*path2)->name) :
 			ft_strcmp((*path1)->name, (*path2)->name));
-	if (HAS_FLAG(opt, ARG_ATIME) &&
+	if (HAS_FLAG(opt, ARG_SORT_SIZE) &&
+		(*path1)->stat->st_size == (*path2)->stat->st_size &&
+		res <= 0)
+		return ;
+	else if (HAS_FLAG(opt, ARG_ATIME) &&
 		(*path1)->stat->st_atime == (*path2)->stat->st_atime &&
 		res <= 0)
 		return ;
