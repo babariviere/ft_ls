@@ -6,11 +6,27 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 13:43:26 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 16:40:09 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
+
+static void		path_to_fmt_sub(t_path *path, t_arg opt, t_fmt *fmt)
+{
+	if (HAS_FLAG(opt, ARG_HUMAN))
+		ft_add_fmt_str(fmt, ft_stoa_human(path->stat->st_size, 1), 1);
+	else
+		ft_add_fmt_str(fmt, ft_itoa(path->stat->st_size), 1);
+	if (HAS_FLAG(opt, ARG_CTIME))
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_ctime), 1);
+	else if (HAS_FLAG(opt, ARG_ATIME))
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_atime), 1);
+	else if (HAS_FLAG(opt, ARG_BTIME))
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_birthtime), 1);
+	else
+		ft_add_fmt_str(fmt, get_file_time(path->stat->st_mtime), 1);
+}
 
 static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
 {
@@ -25,19 +41,9 @@ static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
 				HAS_FLAG(opt, ARG_FOLLOW_LNK)), 1);
 	ft_add_fmt_str(fmt, ft_itoa(path->stat->st_nlink), 1);
 	ft_add_fmt_str(fmt, get_pw_name(path->stat->st_uid), 2);
-	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 + HAS_FLAG(opt, ARG_HUMAN));
-	if (HAS_FLAG(opt, ARG_HUMAN))
-		ft_add_fmt_str(fmt, ft_stoa_human(path->stat->st_size, 1), 1);
-	else
-		ft_add_fmt_str(fmt, ft_itoa(path->stat->st_size), 1);
-	if (HAS_FLAG(opt, ARG_CTIME))
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_ctime), 1);
-	else if (HAS_FLAG(opt, ARG_ATIME))
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_atime), 1);
-	else if (HAS_FLAG(opt, ARG_BTIME))
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_birthtime), 1);
-	else
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_mtime), 1);
+	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 +
+			HAS_FLAG(opt, ARG_HUMAN));
+	path_to_fmt_sub(path, opt, fmt);
 	ft_add_fmt_str(fmt, ft_strdup(path->name), 1);
 	if (FT_ISLNK(path->stat->st_mode))
 	{
@@ -47,19 +53,6 @@ static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
 		ft_add_fmt_str(fmt, ft_strdup(buf), 0);
 	}
 	return (fmt);
-}
-
-static void		print_total_blocks(t_path **path, size_t total_blk,
-		size_t tab_len)
-{
-	char	*tmp;
-
-	if (tab_len == 1 && FT_ISREG(path[0]->stat->st_mode))
-		return ;
-	ft_putstr("total ");
-	tmp = ft_itoa(total_blk);
-	ft_putendl(tmp);
-	free(tmp);
 }
 
 static void		calibrate_list_fmt(t_fmt **fmts)

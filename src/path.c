@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 13:42:00 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 16:29:17 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,19 +42,17 @@ t_path		*ft_init_path(const char *dir_path, const char *name,
 		return (0);
 	if ((path->fstat = malloc(sizeof(struct stat))) == 0)
 		return (0);
-	if (follow_lnk)
-		res = stat(path->path, path->stat);
-	else
-		res = lstat(path->path, path->stat);
-	if (res < 0)
-		res = lstat(path->path, path->stat);
+	res = stat(path->path, path->fstat);
 	if (res < 0)
 	{
 		ft_putstr("ls: ");
 		perror(path->path);
 		return (0);
 	}
-	res = stat(path->path, path->fstat);
+	if (follow_lnk)
+		res = stat(path->path, path->stat);
+	else
+		lstat(path->path, path->stat);
 	return (path);
 }
 
@@ -92,9 +90,9 @@ void		ft_free_path(t_path **path)
 		ft_strdel(&(*path)->path);
 	if ((*path)->name)
 		ft_strdel(&(*path)->name);
-	if ((*path)->stat)
-		ft_memdel((void **)&(*path)->stat);
 	if ((*path)->fstat)
 		ft_memdel((void **)&(*path)->fstat);
+	if ((*path)->stat)
+		ft_memdel((void **)&(*path)->stat);
 	ft_memdel((void **)path);
 }

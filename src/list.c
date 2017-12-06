@@ -6,13 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 04:47:06 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 13:36:24 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 16:32:45 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void	ft_make_sort_paths(t_path **path, t_arg opt)
+void			ft_make_sort_paths(t_path **path, t_arg opt)
 {
 	if (HAS_FLAG(opt, ARG_SORT_SIZE))
 		ft_sort_subpath_size(path, HAS_FLAG(opt, ARG_REV));
@@ -24,9 +24,9 @@ void	ft_make_sort_paths(t_path **path, t_arg opt)
 		ft_sort_subpath_mtime(path, HAS_FLAG(opt, ARG_REV));
 	else if (HAS_FLAG(opt, ARG_BTIME) && HAS_FLAG(opt, ARG_SORT_TIME))
 		ft_sort_subpath_btime(path, HAS_FLAG(opt, ARG_REV));
-	//else if (HAS_FLAG(opt, ARG_SORT))
-	//	ft_sort_subpath(path, (HAS_FLAG(opt, ARG_REV) ?
-	//				ft_strcmp_rev : ft_strcmp));
+	else if (HAS_FLAG(opt, ARG_SORT))
+		ft_sort_subpath(path, (HAS_FLAG(opt, ARG_REV) ?
+					ft_strcmp_rev : ft_strcmp));
 }
 
 static void		free_spath(t_path **spath)
@@ -41,9 +41,27 @@ static void		free_spath(t_path **spath)
 	}
 }
 
-void	list_files_rec(t_path **path, t_arg opt)
+static void		list_files_rec_sub(t_path *path, t_arg opt,
+		int follow_lnk, int hidden)
 {
 	t_path	**spath;
+
+	spath = ft_get_subpath(path->path, follow_lnk, hidden);
+	ft_putchar('\n');
+	ft_putstr(path->path);
+	ft_putendl(":");
+	if (spath == 0)
+	{
+		perror("ls: ");
+		return ;
+	}
+	list_files(spath, opt);
+	free_spath(spath);
+	free(spath);
+}
+
+void			list_files_rec(t_path **path, t_arg opt)
+{
 	int		idx;
 	int		follow_lnk;
 	int		hidden;
@@ -58,22 +76,11 @@ void	list_files_rec(t_path **path, t_arg opt)
 			continue ;
 		if (!FT_ISDIR(path[idx]->stat->st_mode))
 			continue ;
-		spath = ft_get_subpath(path[idx]->path, follow_lnk, hidden);
-		ft_putchar('\n');
-		ft_putstr(path[idx]->path);
-		ft_putendl(":");
-		if (spath == 0)
-		{
-			perror("ls: ");
-			continue ;
-		}
-		list_files(spath, opt);
-		free_spath(spath);
-		free(spath);
+		list_files_rec_sub(path[idx], opt, follow_lnk, hidden);
 	}
 }
 
-void	list_files(t_path **path, t_arg opt)
+void			list_files(t_path **path, t_arg opt)
 {
 	size_t	idx;
 

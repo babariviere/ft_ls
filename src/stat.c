@@ -6,13 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 19:16:25 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 11:53:48 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/06 16:37:43 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-char	*get_pw_name(uid_t uid)
+char		*get_pw_name(uid_t uid)
 {
 	struct passwd	*pwd;
 
@@ -23,7 +23,7 @@ char	*get_pw_name(uid_t uid)
 		return (ft_itoa(uid));
 }
 
-char	*get_gr_name(uid_t uid)
+char		*get_gr_name(uid_t uid)
 {
 	struct group	*grp;
 
@@ -34,13 +34,37 @@ char	*get_gr_name(uid_t uid)
 		return (ft_itoa(uid));
 }
 
-char	*get_file_time(long tm)
+static void	get_file_time_sub(time_t ftime, time_t nw, char **time_str,
+		char **splitted)
+{
+	char		*tmp;
+
+	if (ftime > nw || ftime < (nw - 16070400))
+	{
+		tmp = *time_str;
+		*time_str = ft_strjoin_sep(tmp, "  ", splitted[4]);
+		free(tmp);
+		tmp = *time_str;
+		*time_str = ft_strtrim(tmp);
+		free(tmp);
+	}
+	else
+	{
+		tmp = *time_str;
+		*time_str = ft_strnew(ft_strlen(tmp) + 6);
+		ft_strcpy(*time_str, tmp);
+		ft_strcat(*time_str, " ");
+		ft_strncat(*time_str, splitted[3], 5);
+		free(tmp);
+	}
+}
+
+char		*get_file_time(long tm)
 {
 	time_t		nw;
 	time_t		ftime;
 	char		**splitted;
 	char		*time_str;
-	char		*tmp;
 
 	ftime = tm;
 	nw = time(0);
@@ -52,24 +76,7 @@ char	*get_file_time(long tm)
 		time_str = ft_strjoin_sep(splitted[1], "  ", splitted[2]);
 	free(splitted[1]);
 	free(splitted[2]);
-	if (ftime > nw || ftime < (nw - 16070400))
-	{
-		tmp = time_str;
-		time_str = ft_strjoin_sep(tmp, "  ", splitted[4]);
-		free(tmp);
-		tmp = time_str;
-		time_str = ft_strtrim(tmp);
-		free(tmp);
-	}
-	else
-	{
-		tmp = time_str;
-		time_str = ft_strnew(ft_strlen(tmp) + 6);
-		ft_strcpy(time_str, tmp);
-		ft_strcat(time_str, " ");
-		ft_strncat(time_str, splitted[3], 5);
-		free(tmp);
-	}
+	get_file_time_sub(ftime, nw, &time_str, splitted);
 	free(splitted[3]);
 	free(splitted[4]);
 	free(splitted);
