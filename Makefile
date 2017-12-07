@@ -6,9 +6,11 @@ SRC=$(addprefix src/, $(SRC_NAME))
 OBJ=$(patsubst src/%.c, obj/%.o, $(SRC))
 OBJ_DBG=$(patsubst src/%.c, obj_dbg/%.o, $(SRC))
 CC=clang
-LIBS=-Llibft/ -lft -L/Users/briviere/.brew/lib -lprofiler -ltcmalloc
-LIBS_DBG=-Llibft -lftdbg
-CFLAGS=-Wall -Werror -Wextra -Iinclude -Ilibft/include -fno-builtin-malloc -fno-builtin-calloc -fno-builtin-realloc -fno-builtin-free
+LIBS=-Llibft/ -lft
+LIBS_DBG=-Llibft/ -lftdbg
+CFLAGS=-Wall -Werror -Wextra -Iinclude -Ilibft/include
+CALLGRIND_OUT ?= callgrind.out
+CMD_ARG ?= -R ~
 
 all: $(NAME)
 
@@ -18,7 +20,7 @@ $(NAME): $(OBJ)
 
 $(NAME_DBG): $(OBJ_DBG)
 	@make -C libft/ debug
-	$(CC) $(CFLAGS) -o $(NAME_DBG) $(OBJ_DBG) $(LIBS_DBG)
+	$(CC) $(CFLAGS) -g -o $(NAME_DBG) $(OBJ_DBG) $(LIBS_DBG)
 
 obj/%.o: src/%.c
 	@mkdir -p obj
@@ -33,8 +35,16 @@ debug: $(NAME_DBG)
 lldb: $(NAME_DBG)
 	@lldb $(NAME_DBG)
 
+callgrind: $(NAME_DBG)
+	@valgrind --tool=callgrind --callgrind-out-file=$(CALLGRIND_OUT) $(NAME_DBG) $(CMD_ARG) 1> /dev/null
+	@callgrind_annotate $(CALLGRIND_OUT)
+
+qcachegrind: $(NAME_DBG)
+	@valgrind --tool=callgrind --callgrind-out-file=$(CALLGRIND_OUT) $(NAME_DBG) $(CMD_ARG) 1> /dev/null
+	@qcachegrind $(CALLGRIND_OUT)
+
 leaks: $(NAME_DBG)
-	@valgrind --leak-check=full --track-origins=yes $(NAME_DBG)
+	@valgrind --leak-check=full --track-origins=yes $(NAME_DBG) 1> /dev/null
 
 norme: $(SRC)
 	@norminette $(SRC)

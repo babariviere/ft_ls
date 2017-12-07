@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 13:44:30 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/07 16:59:09 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,24 +15,21 @@
 void		list_dir(char *dir, t_arg arg)
 {
 	t_path	*path;
-	t_path	**spath;
-	int		idx;
+	t_list	*spath;
 
-	path = ft_init_path(0, dir, HAS_FLAG(arg, ARG_FOLLOW_LNK));
+	path = ft_init_path(0, dir, -1);
+	ft_path_readstat(path, HAS_FLAG(arg, ARG_FOLLOW_LNK));
 	if (path == 0)
 	{
-		perror(dir);
+		print_last_err(dir);
 		return ;
 	}
-	if (!FT_ISDIR(path->fstat->st_mode))
-	{
-		spath = malloc(sizeof(t_path *) * 2);
-		spath[0] = ft_init_path(0, dir, HAS_FLAG(arg, ARG_FOLLOW_LNK));
-		spath[1] = 0;
-	}
+	if (!FT_ISDIR(path->mode))
+		spath = ft_lstnew(ft_init_path(0, dir, DT_REG), sizeof(t_path));
 	else
 		spath = ft_get_subpath(path->path, HAS_FLAG(arg, ARG_FOLLOW_LNK),
-				HAS_FLAG(arg, ARG_HIDDEN));
+				HAS_FLAG(arg, ARG_HIDDEN),
+				HAS_FLAG(arg, ARG_LIST_FMT) || HAS_FLAG(arg, ARG_SORT));
 	if (spath == 0)
 	{
 		ft_putstr("ls: ");
@@ -40,91 +37,72 @@ void		list_dir(char *dir, t_arg arg)
 		return ;
 	}
 	list_files(spath, arg);
-	idx = 0;
-	while (spath[idx])
-	{
-		ft_free_path(spath + idx);
-		idx++;
-	}
-	free(spath);
+	ft_lstdel(&spath, free_spath);
 	ft_free_path(&path);
 }
 
-void		print_files(t_path **paths, t_arg arg)
+int			path_is_file(t_list *elem)
 {
-	t_path		**files;
-	size_t		idx;
-	size_t		sidx;
-	
-	idx = 0;
-	sidx = 0;
-	while (paths[idx])
-	{
-		if (!FT_ISDIR(paths[idx]->fstat->st_mode))
-		{
-			ft_swap_ptr((void **)(paths + idx), (void **)(paths + sidx));
-			sidx++;
-		}
-		idx++;
-	}
-	files = malloc(sizeof(t_path *) * (sidx + 1));
-	files[0] = 0;
-	ft_memcpy(files, paths, sizeof(t_path *) * sidx);
-	files[sidx] = 0;
+	t_path		*p;
+
+	p = elem->content;
+	return (!FT_ISDIR(p->mode));
+}
+
+void		print_files(t_list *list, t_arg arg)
+{
+	t_list		*files;
+
+	files = ft_lstfilter(list, path_is_file);
 	list_files(files, arg);
-	free(files);
 }
 
 
 void		list_av(char **av, t_arg arg)
 {
-	t_path	**paths;
+	t_list	*paths;
+	t_list	*path;
 	size_t	idx;
-	size_t	sidx;
 	int		print;
 	int		has_file;
 
 	if (*av == 0)
 		list_dir(".", arg);
-	if ((paths = ft_memalloc(sizeof(t_path *) *
-					(ft_tablen(av, sizeof(char *)) + 1))) == 0)
-		return ;
 	print = av[0] && av[1];
 	idx = 0;
-	sidx = 0;
 	has_file = 0;
+	paths = 0;
 	while (av[idx])
 	{
-		paths[sidx] = ft_init_path(0, av[idx], HAS_FLAG(arg, ARG_FOLLOW_LNK));
-		if (paths[sidx] && !FT_ISDIR(paths[sidx]->fstat->st_mode))
+		path = ft_lstnew(ft_init_path(0, av[idx++], -1), sizeof(t_path));
+		ft_path_readstat(path->content, HAS_FLAG(arg, ARG_FOLLOW_LNK));
+		if (path->content && !FT_ISDIR(((t_path *)path->content)->mode))
 			has_file = 1;
-		if (paths[sidx])
-			sidx++;
-		idx++;
+		if (path)
+			ft_lstpush(&paths, path);
 	}
 	if (!HAS_FLAG(arg, ARG_SORT_TIME) && HAS_FLAG(arg, ARG_SORT))
 		ft_make_sort_paths(paths, arg);
 	print_files(paths, arg);
 	if (!HAS_FLAG(arg, ARG_SORT_TIME) && HAS_FLAG(arg, ARG_SORT))
 		ft_make_sort_paths(paths, arg);
-	idx = 0;
-	while (paths[idx])
+	path = paths;
+	while (path)
 	{
-		if (!FT_ISDIR(paths[idx]->fstat->st_mode))
+		if (!FT_ISDIR(((t_path *)path->content)->mode))
 		{
-			idx++;
+			path = path->next;
 			continue ;
 		}
 		if (print)
 		{
-			if (idx > 0 || has_file)
+			if (path != paths || has_file)
 				ft_putchar('\n');
-			ft_putstr(paths[idx]->name);
+			ft_putstr(((t_path *)path->content)->name);
 			ft_putendl(":");
 		}
-		list_dir(paths[idx]->name, arg);
-		ft_free_path(paths + idx);
-		idx++;
+		list_dir(((t_path *)path->content)->name, arg);
+		path = path->next;
 	}
 	free(paths);
 }

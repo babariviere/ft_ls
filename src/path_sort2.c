@@ -6,62 +6,41 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 08:28:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 13:23:01 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/07 13:13:49 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void			ft_sort_subpath_btime(t_path **paths, int rev)
+int			ft_path_cmp_name(const t_path *p1, const t_path *p2)
 {
-	size_t		idx;
-	size_t		sub_idx;
-
-	if (paths == 0)
-		return ;
-	idx = 0;
-	while (paths[idx] && paths[idx + 1])
-	{
-		sub_idx = idx + 1;
-		while (paths[sub_idx])
-		{
-			if (!rev && paths[idx]->stat->st_birthtime <=
-					paths[sub_idx]->stat->st_birthtime)
-				ft_swap_if_not_gr((paths + idx),
-						(paths + sub_idx), ARG_BTIME, rev);
-			else if (rev && paths[idx]->stat->st_birthtime >=
-					paths[sub_idx]->stat->st_birthtime)
-				ft_swap_if_not_gr((paths + idx),
-						(paths + sub_idx), ARG_BTIME, rev);
-			sub_idx++;
-		}
-		idx++;
-	}
+	return (ft_strcmp(p1->name, p2->name));
 }
 
-void			ft_sort_subpath_size(t_path **paths, int rev)
+int			ft_path_cmp_atime(const t_path *p1, const t_path *p2)
 {
-	size_t		idx;
-	size_t		sub_idx;
+	if (p1->atime == p2->atime)
+		return (ft_strcmp(p1->name, p2->name));
+	return (p2->atime - p1->atime);
+}
 
-	if (paths == 0)
-		return ;
-	idx = 0;
-	while (paths[idx] && paths[idx + 1])
-	{
-		sub_idx = idx + 1;
-		while (paths[sub_idx])
-		{
-			if (!rev && paths[idx]->stat->st_size <=
-					paths[sub_idx]->stat->st_size)
-				ft_swap_if_not_gr((paths + idx),
-						(paths + sub_idx), ARG_SORT_SIZE, rev);
-			else if (rev && paths[idx]->stat->st_size >=
-					paths[sub_idx]->stat->st_size)
-				ft_swap_if_not_gr((paths + idx),
-						(paths + sub_idx), ARG_SORT_SIZE, rev);
-			sub_idx++;
-		}
-		idx++;
-	}
+int			ft_path_cmp_btime(const t_path *p1, const t_path *p2)
+{
+	if (p1->btime == p2->btime)
+		return (ft_strcmp(p1->name, p2->name));
+	return (p2->btime - p1->btime);
+}
+
+int			ft_path_cmp_ctime(const t_path *p1, const t_path *p2)
+{
+	if (p1->ctime == p2->ctime)
+		return (ft_strcmp(p1->name, p2->name));
+	return (p2->ctime - p1->ctime);
+}
+
+int			ft_path_cmp_mtime(const t_path *p1, const t_path *p2)
+{
+	if (p1->mtime == p2->mtime)
+		return (ft_strcmp(p1->name, p2->name));
+	return (p2->mtime - p1->mtime);
 }

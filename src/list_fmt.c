@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 16:40:09 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/07 16:31:34 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,17 @@
 static void		path_to_fmt_sub(t_path *path, t_arg opt, t_fmt *fmt)
 {
 	if (HAS_FLAG(opt, ARG_HUMAN))
-		ft_add_fmt_str(fmt, ft_stoa_human(path->stat->st_size, 1), 1);
+		ft_add_fmt_str(fmt, ft_stoa_human(path->size, 1), 1);
 	else
-		ft_add_fmt_str(fmt, ft_itoa(path->stat->st_size), 1);
+		ft_add_fmt_str(fmt, ft_itoa(path->size), 1);
 	if (HAS_FLAG(opt, ARG_CTIME))
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_ctime), 1);
+		ft_add_fmt_str(fmt, get_file_time(path->ctime), 1);
 	else if (HAS_FLAG(opt, ARG_ATIME))
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_atime), 1);
+		ft_add_fmt_str(fmt, get_file_time(path->atime), 1);
 	else if (HAS_FLAG(opt, ARG_BTIME))
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_birthtime), 1);
+		ft_add_fmt_str(fmt, get_file_time(path->btime), 1);
 	else
-		ft_add_fmt_str(fmt, get_file_time(path->stat->st_mtime), 1);
+		ft_add_fmt_str(fmt, get_file_time(path->mtime), 1);
 }
 
 static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
@@ -34,18 +34,18 @@ static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
 	char		buf[1024];
 	size_t		r;
 
-	if ((fmt = ft_init_fmt(8 + (FT_ISLNK(path->stat->st_mode) * 2))) == 0)
+	if ((fmt = ft_init_fmt(8 + (FT_ISLNK(path->mode) * 2))) == 0)
 		return (0);
-	ft_add_fmt_str(fmt, get_permissions(path->stat->st_mode), 0);
+	ft_add_fmt_str(fmt, get_permissions(path->mode), 0);
 	ft_add_fmt_str(fmt, get_xattr_symbol(path->path,
 				HAS_FLAG(opt, ARG_FOLLOW_LNK)), 1);
-	ft_add_fmt_str(fmt, ft_itoa(path->stat->st_nlink), 1);
-	ft_add_fmt_str(fmt, get_pw_name(path->stat->st_uid), 2);
-	ft_add_fmt_str(fmt, get_gr_name(path->stat->st_gid), 2 +
+	ft_add_fmt_str(fmt, ft_itoa(path->nlink), 1);
+	ft_add_fmt_str(fmt, get_pw_name(path->uid), 2);
+	ft_add_fmt_str(fmt, get_gr_name(path->gid), 2 +
 			HAS_FLAG(opt, ARG_HUMAN));
 	path_to_fmt_sub(path, opt, fmt);
 	ft_add_fmt_str(fmt, ft_strdup(path->name), 1);
-	if (FT_ISLNK(path->stat->st_mode))
+	if (FT_ISLNK(path->mode))
 	{
 		ft_add_fmt_str(fmt, ft_strdup("->"), 1);
 		r = readlink(path->path, buf, 1024);
@@ -77,28 +77,30 @@ static void		print_and_free_fmts(t_fmt **fmts, size_t tab_len)
 	free(fmts);
 }
 
-void			print_list_format(t_path **path, t_arg opt)
+void			print_list_format(t_list *files, t_arg opt)
 {
 	t_fmt		**fmts;
+	t_list		*hld;
 	size_t		idx;
 	size_t		total_blk;
 	size_t		tab_len;
 
-	if (path == 0 || *path == 0)
+	if (files == 0 || files->content == 0)
 		return ;
-	tab_len = ft_tablen(path, sizeof(t_path *));
+	tab_len = ft_lstlen(files);
 	if ((fmts = malloc(sizeof(t_fmt *) * (tab_len + 1))) == 0)
 		return ;
 	idx = 0;
 	total_blk = 0;
-	while (idx < tab_len)
+	hld = files;
+	while (hld)
 	{
-		fmts[idx] = path_to_fmt(path[idx], opt);
-		total_blk += path[idx]->stat->st_blocks;
-		idx++;
+		fmts[idx++] = path_to_fmt(hld->content, opt);
+		total_blk += ((t_path *)hld->content)->blocks;
+		hld = hld->next;
 	}
 	fmts[idx] = 0;
 	calibrate_list_fmt(fmts);
-	print_total_blocks(path, total_blk, tab_len);
+	print_total_blocks(files->content, total_blk, tab_len);
 	print_and_free_fmts(fmts, tab_len);
 }
