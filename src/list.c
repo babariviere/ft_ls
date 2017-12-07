@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 04:47:06 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/07 16:57:02 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/07 17:26:15 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void			ft_make_sort_paths(t_list *paths, t_arg opt)
 
 void			free_spath(void *content, size_t size)
 {
-	if (size != sizeof(t_path *))
+	if (size != sizeof(t_path))
 		return ;
 	ft_free_path(content);
 }
