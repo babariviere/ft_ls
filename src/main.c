@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/08 13:26:26 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 17:10:53 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void		list_dir(char *dir, t_arg arg)
 {
 	t_path	*path;
-	t_list	*spath;
+	t_dlst	*spath;
 
 	path = ft_init_path(0, dir, -1);
 	ft_path_readstat(path, (arg & ARG_FOLLOW_LNK));
@@ -25,7 +25,7 @@ void		list_dir(char *dir, t_arg arg)
 		return ;
 	}
 	if (!FT_ISDIR(path->mode))
-		spath = ft_lstnew_mv(ft_init_path(0, dir, DT_REG), sizeof(t_path));
+		spath = ft_dlstnew_mv(ft_init_path(0, dir, DT_REG), sizeof(t_path));
 	else
 		spath = ft_get_subpath(path->path, (arg & ARG_FOLLOW_LNK),
 				(arg & ARG_HIDDEN),
@@ -37,11 +37,11 @@ void		list_dir(char *dir, t_arg arg)
 	}
 	if (spath->content != 0)
 		list_files(spath, arg);
-	ft_lstdel(&spath, free_spath);
+	ft_dlstdel(&spath, free_spath);
 	ft_free_path(&path);
 }
 
-int			path_is_file(t_list *elem)
+int			path_is_file(t_dlst *elem)
 {
 	t_path		*p;
 
@@ -49,20 +49,20 @@ int			path_is_file(t_list *elem)
 	return (!FT_ISDIR(p->mode));
 }
 
-void		print_files(t_list *list, t_arg arg)
+void		print_files(t_dlst *list, t_arg arg)
 {
-	t_list		*files;
+	t_dlst		*files;
 
-	files = ft_lstfilter(list, path_is_file);
+	files = ft_dlstfilter(list, path_is_file);
 	if (!(arg & ARG_SORT_TIME) && (arg & ARG_SORT))
 		ft_make_sort_paths(files, arg);
 	list_files(files, arg);
-	ft_lstdel(&files, free_spath);
+	ft_dlstdel(&files, free_spath);
 }
 
-void		print_dirs(t_list *paths, t_arg arg, int print, int has_file)
+void		print_dirs(t_dlst *paths, t_arg arg, int print, int has_file)
 {
-	t_list		*path;
+	t_dlst		*path;
 
 	path = paths;
 	while (path)
@@ -86,8 +86,8 @@ void		print_dirs(t_list *paths, t_arg arg, int print, int has_file)
 
 void		list_av(char **av, t_arg arg)
 {
-	t_list	*paths;
-	t_list	*path;
+	t_dlst	*paths;
+	t_dlst	*path;
 	size_t	idx;
 	int		print;
 	int		has_file;
@@ -100,13 +100,13 @@ void		list_av(char **av, t_arg arg)
 	paths = 0;
 	while (av[idx])
 	{
-		path = ft_lstnew_mv(ft_init_path(0, av[idx++], -1), sizeof(t_path));
+		path = ft_dlstnew_mv(ft_init_path(0, av[idx++], -1), sizeof(t_path));
 		if (ft_path_readstat(path->content, (arg & ARG_FOLLOW_LNK)) == 0)
 			return ;
 		if (path->content && !FT_ISDIR(((t_path *)path->content)->mode))
 			has_file = 1;
 		if (path)
-			ft_lstpush(&paths, path);
+			ft_dlstpush(&paths, path);
 	}
 	print_files(paths, arg);
 	if (!(arg & ARG_SORT_TIME) && (arg & ARG_SORT))

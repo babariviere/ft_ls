@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/08 12:35:04 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 17:11:23 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,13 @@ t_path		*ft_init_path(const char *dir_path, const char *name, short ftype)
 	return (path);
 }
 
-t_list		*ft_get_subpath(const char *path, int follow_lnk, int hidden,
+t_dlst		*ft_get_subpath(const char *path, int follow_lnk, int hidden,
 		int set_stat)
 {
 	DIR				*dir;
 	struct dirent	*ent;
-	t_list			*spath;
-	t_list			*nw;
+	t_dlst			*spath;
+	t_dlst			*nw;
 
 	if (path == 0)
 		return (0);
@@ -57,14 +57,14 @@ t_list		*ft_get_subpath(const char *path, int follow_lnk, int hidden,
 	while ((ent = readdir(dir)))
 		if ((ent->d_name[0] == '.' && hidden) || ent->d_name[0] != '.')
 		{
-			nw = ft_lstnew_mv(ft_init_path(path, ent->d_name, ent->d_type),
+			nw = ft_dlstnew_mv(ft_init_path(path, ent->d_name, ent->d_type),
 					sizeof(t_path));
 			if (set_stat)
 				ft_path_readstat(nw->content, follow_lnk);
-			ft_lstpush(&spath, nw);
+			ft_dlstpush(&spath, nw);
 		}
 	closedir(dir);
-	spath = (spath == 0 ? ft_lstnew(0, 0) : spath);
+	spath = (spath == 0 ? ft_dlstnew(0, 0) : spath);
 	return (spath);
 }
 

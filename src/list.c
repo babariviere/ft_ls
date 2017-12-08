@@ -6,13 +6,13 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 04:47:06 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/08 13:04:45 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 17:11:07 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ft_ls.h"
 
-void			ft_make_sort_paths(t_list *paths, t_arg opt)
+void			ft_make_sort_paths(t_dlst *paths, t_arg opt)
 {
 	int		(*f)(const t_path *, const t_path *);
 
@@ -43,7 +43,7 @@ void			free_spath(void *content, size_t size)
 static void		list_files_rec_sub(t_path *path, t_arg opt,
 		int follow_lnk, int hidden)
 {
-	t_list	*spath;
+	t_dlst	*spath;
 
 	ft_putchar('\n');
 	ft_putstr(path->path);
@@ -53,10 +53,10 @@ static void		list_files_rec_sub(t_path *path, t_arg opt,
 	if (spath == 0)
 		return ;
 	list_files(spath, opt);
-	ft_lstdel(&spath, free_spath);
+	ft_dlstdel(&spath, free_spath);
 }
 
-void			list_files_rec(t_list *files, t_arg opt)
+void			list_files_rec(t_dlst *files, t_arg opt)
 {
 	int		follow_lnk;
 	int		hidden;
@@ -85,9 +85,9 @@ void			list_files_rec(t_list *files, t_arg opt)
 	}
 }
 
-void			list_files(t_list *files, t_arg opt)
+void			list_files(t_dlst *files, t_arg opt)
 {
-	t_list	*hld;
+	t_dlst	*hld;
 
 	if (files == 0)
 		return ;
