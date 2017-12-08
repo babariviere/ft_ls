@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 08:28:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/08 16:03:56 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 16:04:50 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ void		ft_sort_subpath(t_list *files,
 {
 	//(void)rev;
 	//ft_sort_spath_qsort(files, 0, ft_lstlen(files) - 1, cmp);
-	//t_list		*begin;
-	//t_list		*end;
+	t_list		*begin;
+	t_list		*end;
 
 	if (files == 0)
 		return ;
