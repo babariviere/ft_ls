@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 08:28:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/07 13:13:49 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 09:57:37 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,28 +19,28 @@ int			ft_path_cmp_name(const t_path *p1, const t_path *p2)
 
 int			ft_path_cmp_atime(const t_path *p1, const t_path *p2)
 {
-	if (p1->atime == p2->atime)
+	if (p1->fatime == p2->fatime)
 		return (ft_strcmp(p1->name, p2->name));
-	return (p2->atime - p1->atime);
+	return (p2->fatime - p1->fatime);
 }
 
 int			ft_path_cmp_btime(const t_path *p1, const t_path *p2)
 {
-	if (p1->btime == p2->btime)
+	if (p1->fbtime == p2->fbtime)
 		return (ft_strcmp(p1->name, p2->name));
-	return (p2->btime - p1->btime);
+	return (p2->fbtime - p1->fbtime);
 }
 
 int			ft_path_cmp_ctime(const t_path *p1, const t_path *p2)
 {
-	if (p1->ctime == p2->ctime)
+	if (p1->fctime == p2->fctime)
 		return (ft_strcmp(p1->name, p2->name));
-	return (p2->ctime - p1->ctime);
+	return (p2->fctime - p1->fctime);
 }
 
 int			ft_path_cmp_mtime(const t_path *p1, const t_path *p2)
 {
-	if (p1->mtime == p2->mtime)
+	if (p1->fmtime == p2->fmtime)
 		return (ft_strcmp(p1->name, p2->name));
-	return (p2->mtime - p1->mtime);
+	return (p2->fmtime - p1->fmtime);
 }

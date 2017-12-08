@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:10:02 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 13:22:07 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 15:26:17 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,8 @@ static int	set_arg_opt_from_arg(t_arg *opt, const char arg)
 	else if (arg == 'L')
 		return (*opt |= ARG_FOLLOW_LNK);
 	else if (arg == 'f')
-		return (*opt = (*opt | ARG_HIDDEN) & ~ARG_SORT);
+		return (*opt = (*opt | ARG_HIDDEN) & ~ARG_SORT &
+				~ARG_SORT_TIME & ~ARG_SORT_SIZE);
 	else if (arg == 'S')
 		return (*opt |= ARG_SORT_SIZE);
 	return (set_arg_opt_time(opt, arg));
@@ -60,8 +61,9 @@ int			parse_arg(t_arg *opt, const char *arg)
 	{
 		if (set_arg_opt_from_arg(opt, arg[idx]) == 0)
 		{
-			ft_puterr(1, ft_strjoin("ls: illegal option -- ",
-							ft_strsub(arg, idx, 1)));
+			ft_putstr_fd("ls: illegal option -- ", 2);
+			ft_putchar_fd(arg[idx], 2);
+			ft_putchar_fd('\n', 2);
 			exit(usage(1));
 		}
 		idx++;

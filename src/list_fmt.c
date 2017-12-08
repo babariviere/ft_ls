@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/07 16:31:34 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 13:26:20 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,15 @@
 
 static void		path_to_fmt_sub(t_path *path, t_arg opt, t_fmt *fmt)
 {
-	if (HAS_FLAG(opt, ARG_HUMAN))
+	if ((opt & ARG_HUMAN))
 		ft_add_fmt_str(fmt, ft_stoa_human(path->size, 1), 1);
 	else
 		ft_add_fmt_str(fmt, ft_itoa(path->size), 1);
-	if (HAS_FLAG(opt, ARG_CTIME))
+	if ((opt & ARG_CTIME))
 		ft_add_fmt_str(fmt, get_file_time(path->ctime), 1);
-	else if (HAS_FLAG(opt, ARG_ATIME))
+	else if ((opt & ARG_ATIME))
 		ft_add_fmt_str(fmt, get_file_time(path->atime), 1);
-	else if (HAS_FLAG(opt, ARG_BTIME))
+	else if ((opt & ARG_BTIME))
 		ft_add_fmt_str(fmt, get_file_time(path->btime), 1);
 	else
 		ft_add_fmt_str(fmt, get_file_time(path->mtime), 1);
@@ -38,11 +38,11 @@ static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
 		return (0);
 	ft_add_fmt_str(fmt, get_permissions(path->mode), 0);
 	ft_add_fmt_str(fmt, get_xattr_symbol(path->path,
-				HAS_FLAG(opt, ARG_FOLLOW_LNK)), 1);
+				(opt & ARG_FOLLOW_LNK)), 1);
 	ft_add_fmt_str(fmt, ft_itoa(path->nlink), 1);
 	ft_add_fmt_str(fmt, get_pw_name(path->uid), 2);
 	ft_add_fmt_str(fmt, get_gr_name(path->gid), 2 +
-			HAS_FLAG(opt, ARG_HUMAN));
+			(opt & ARG_HUMAN));
 	path_to_fmt_sub(path, opt, fmt);
 	ft_add_fmt_str(fmt, ft_strdup(path->name), 1);
 	if (FT_ISLNK(path->mode))
@@ -85,7 +85,7 @@ void			print_list_format(t_list *files, t_arg opt)
 	size_t		total_blk;
 	size_t		tab_len;
 
-	if (files == 0 || files->content == 0)
+	if (files == 0 || files->content_size == 0)
 		return ;
 	tab_len = ft_lstlen(files);
 	if ((fmts = malloc(sizeof(t_fmt *) * (tab_len + 1))) == 0)
@@ -93,7 +93,7 @@ void			print_list_format(t_list *files, t_arg opt)
 	idx = 0;
 	total_blk = 0;
 	hld = files;
-	while (hld)
+	while (hld && hld->content_size)
 	{
 		fmts[idx++] = path_to_fmt(hld->content, opt);
 		total_blk += ((t_path *)hld->content)->blocks;

@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 04:47:06 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/07 17:26:15 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 13:04:45 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,27 @@ void			ft_make_sort_paths(t_list *paths, t_arg opt)
 	int		(*f)(const t_path *, const t_path *);
 
 	f = 0;
-	if (HAS_FLAG(opt, ARG_SORT_SIZE))
+	if (opt & ARG_SORT_SIZE)
 		f = ft_path_cmp_size;
-	else if (HAS_FLAG(opt, ARG_ATIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+	else if ((opt & ARG_ATIME) && (opt & ARG_SORT_TIME))
 		f = ft_path_cmp_atime;
-	else if (HAS_FLAG(opt, ARG_CTIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+	else if ((opt & ARG_CTIME) && (opt & ARG_SORT_TIME))
 		f = ft_path_cmp_ctime;
-	else if (HAS_FLAG(opt, ARG_MTIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+	else if ((opt & ARG_MTIME) && (opt & ARG_SORT_TIME))
 		f = ft_path_cmp_mtime;
-	else if (HAS_FLAG(opt, ARG_BTIME) && HAS_FLAG(opt, ARG_SORT_TIME))
+	else if ((opt & ARG_BTIME) && (opt & ARG_SORT_TIME))
 		f = ft_path_cmp_btime;
-	else if (HAS_FLAG(opt, ARG_SORT))
+	else if ((opt & ARG_SORT))
 		f = ft_path_cmp_name;
 	if (f)
-		ft_sort_subpath(paths, f, HAS_FLAG(opt, ARG_REV));
+		ft_sort_subpath(paths, f, (opt & ARG_REV));
 }
 
 void			free_spath(void *content, size_t size)
 {
 	if (size != sizeof(t_path))
 		return ;
-	ft_free_path(content);
+	ft_free_path((t_path **)&content);
 }
 
 static void		list_files_rec_sub(t_path *path, t_arg opt,
@@ -49,7 +49,7 @@ static void		list_files_rec_sub(t_path *path, t_arg opt,
 	ft_putstr(path->path);
 	ft_putendl(":");
 	spath = ft_get_subpath(path->path, follow_lnk, hidden,
-			HAS_FLAG(opt, ARG_SORT) || HAS_FLAG(opt, ARG_LIST_FMT));
+			(opt & ARG_SORT) || (opt & ARG_LIST_FMT));
 	if (spath == 0)
 		return ;
 	list_files(spath, opt);
@@ -61,9 +61,9 @@ void			list_files_rec(t_list *files, t_arg opt)
 	int		follow_lnk;
 	int		hidden;
 
-	follow_lnk = HAS_FLAG(opt, ARG_FOLLOW_LNK);
-	hidden = HAS_FLAG(opt, ARG_HIDDEN);
-	while (files)
+	follow_lnk = (opt & ARG_FOLLOW_LNK);
+	hidden = (opt & ARG_HIDDEN);
+	while (files && files->content_size)
 	{
 		if (ft_strncmp(((t_path *)files->content)->name, ".", 2) == 0)
 		{
@@ -92,17 +92,17 @@ void			list_files(t_list *files, t_arg opt)
 	if (files == 0)
 		return ;
 	ft_make_sort_paths(files, opt);
-	if (HAS_FLAG(opt, ARG_LIST_FMT))
+	if ((opt & ARG_LIST_FMT))
 		print_list_format(files, opt);
-	else if (HAS_FLAG(opt, ARG_ONE_ENT))
+	else if ((opt & ARG_ONE_ENT))
 	{
 		hld = files;
-		while (hld)
+		while (hld && hld->content_size)
 		{
 			ft_putendl(((t_path *)hld->content)->name);
 			hld = hld->next;
 		}
 	}
-	if (HAS_FLAG(opt, ARG_REC))
+	if ((opt & ARG_REC))
 		list_files_rec(files, opt);
 }

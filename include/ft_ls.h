@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/07 16:57:21 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 13:27:12 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,23 +50,21 @@
 # define FT_IWOTH(mode) ((mode & S_IWOTH) == S_IWOTH)
 # define FT_IXOTH(mode) ((mode & S_IXOTH) == S_IXOTH)
 
-# define HAS_FLAG(a, flag) ((a & flag) == flag)
-
 typedef enum	e_arg {
-	ARG_LIST_FMT	=	(1 <<  1),
-	ARG_REC			=	(1 <<  2),
-	ARG_HIDDEN		=	(1 <<  3),
-	ARG_SORT		=	(1 <<  4),
-	ARG_SORT_SIZE	=	(1 <<  5),
-	ARG_SORT_TIME	=	(1 <<  6),
-	ARG_REV			=	(1 <<  7),
-	ARG_ONE_ENT		=	(1 <<  8),
-	ARG_HUMAN		=	(1 <<  9),
-	ARG_FOLLOW_LNK	=	(1 << 10),
-	ARG_MTIME		=	(1 << 11),
-	ARG_CTIME		=	(1 << 12),
-	ARG_ATIME		=	(1 << 13),
-	ARG_BTIME		=	(1 << 14)
+	ARG_LIST_FMT = (1 << 0),
+	ARG_REC = (1 << 1),
+	ARG_HIDDEN = (1 << 2),
+	ARG_SORT = (1 << 3),
+	ARG_SORT_SIZE = (1 << 4),
+	ARG_SORT_TIME = (1 << 5),
+	ARG_REV = (1 << 6),
+	ARG_ONE_ENT = (1 << 7),
+	ARG_HUMAN = (1 << 8),
+	ARG_FOLLOW_LNK = (1 << 9),
+	ARG_MTIME = (1 << 10),
+	ARG_CTIME = (1 << 11),
+	ARG_ATIME = (1 << 12),
+	ARG_BTIME = (1 << 13)
 }				t_arg;
 
 typedef struct	s_path {
@@ -82,44 +80,50 @@ typedef struct	s_path {
 	time_t			ctime;
 	time_t			btime;
 	off_t			size;
+	time_t			fatime;
+	time_t			fmtime;
+	time_t			fctime;
+	time_t			fbtime;
+	off_t			fsize;
 	quad_t			blocks;
 }				t_path;
 
-int			parse_arg(t_arg *opt, const char *arg);
-int			usage(int code);
-void		print_error(int err, const char *path);
-void		print_last_err(const char *path);
+int				parse_arg(t_arg *opt, const char *arg);
+int				usage(int code);
+void			print_error(int err, const char *path);
+void			print_last_err(const char *path);
 
-char		*get_permissions(const int mode);
-char		*get_pw_name(uid_t uid);
-char		*get_gr_name(uid_t uid);
-char		*get_file_time(long time);
-char		*get_xattr_symbol(const char *path, int follow_lnk);
+char			*get_permissions(const int mode);
+char			*get_pw_name(uid_t uid);
+char			*get_gr_name(uid_t uid);
+char			*get_file_time(long time);
+char			*get_xattr_symbol(const char *path, int follow_lnk);
 
-int			count_files(const char *path, int hidden);
+int				count_files(const char *path, int hidden);
 
-t_path		*ft_init_path(const char *d_path, const char *name, short ftype);
-int			ft_path_readstat(t_path *path, int follow_lnk);
-t_list		*ft_get_subpath(const char *path, int follow_lnk, int hidden,
+t_path			*ft_init_path(const char *d_path, const char *name,
+		short ftype);
+int				ft_path_readstat(t_path *path, int follow_lnk);
+t_list			*ft_get_subpath(const char *path, int follow_lnk, int hidden,
 		int set_stat);
-void		ft_free_path(t_path **path);
-void		ft_swap_if_not_gr(t_path **path1, t_path **path2, t_arg opt,
+void			ft_free_path(t_path **path);
+void			ft_swap_if_not_gr(t_path **path1, t_path **path2, t_arg opt,
 		int rev);
-void		ft_make_sort_paths(t_list *paths, t_arg opt);
-void		ft_sort_subpath(t_list *files,
+void			ft_make_sort_paths(t_list *paths, t_arg opt);
+void			ft_sort_subpath(t_list *files,
 		int (*cmp)(const t_path *, const t_path *), int rev);
-int			ft_path_cmp_name(const t_path *p1, const t_path *p2);
-int			ft_path_cmp_size(const t_path *p1, const t_path *p2);
-int			ft_path_cmp_atime(const t_path *p1, const t_path *p2);
-int			ft_path_cmp_btime(const t_path *p1, const t_path *p2);
-int			ft_path_cmp_ctime(const t_path *p1, const t_path *p2);
-int			ft_path_cmp_mtime(const t_path *p1, const t_path *p2);
+int				ft_path_cmp_name(const t_path *p1, const t_path *p2);
+int				ft_path_cmp_size(const t_path *p1, const t_path *p2);
+int				ft_path_cmp_atime(const t_path *p1, const t_path *p2);
+int				ft_path_cmp_btime(const t_path *p1, const t_path *p2);
+int				ft_path_cmp_ctime(const t_path *p1, const t_path *p2);
+int				ft_path_cmp_mtime(const t_path *p1, const t_path *p2);
 
-void		list_files(t_list *files, t_arg arg);
-void		free_spath(void *content, size_t size);
+void			list_files(t_list *files, t_arg arg);
+void			free_spath(void *content, size_t size);
 
-void		print_list_format(t_list *files, t_arg arg);
-void		print_total_blocks(t_path *path, size_t total_blk,
+void			print_list_format(t_list *files, t_arg arg);
+void			print_total_blocks(t_path *path, size_t total_blk,
 		size_t tab_len);
 
 #endif

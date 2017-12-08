@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 03:32:38 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/07 14:37:22 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 12:35:04 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,12 @@
 static char	*ft_concat_path(const char *dir_path, const char *name)
 {
 	char	*tmp;
-	size_t	dir_len;
 
 	if (dir_path == 0)
 		return (ft_strdup(name));
 	if (dir_path[0] == 0)
 		return (ft_strdup(name));
-	dir_len = ft_strlen(dir_path);
-	if (dir_path[dir_len - 1] == '/')
+	if (dir_path[0] == '/' && dir_path[1] == 0)
 		return (ft_strjoin(dir_path, name));
 	tmp = ft_strjoin_sep(dir_path, "/", name);
 	return (tmp);
@@ -38,34 +36,6 @@ t_path		*ft_init_path(const char *dir_path, const char *name, short ftype)
 	path->name = ft_strdup(name);
 	path->ftype = ftype;
 	return (path);
-}
-
-int			ft_path_readstat(t_path *path, int follow_lnk)
-{
-	struct stat		st;
-	int				res;
-
-	if (path->ftype == DT_LNK && !follow_lnk)
-		res = lstat(path->path, &st);
-	else
-		res = stat(path->path, &st);
-	if (res < 0)
-	{
-		ft_putstr("ls: ");
-		perror(path->path);
-		return (0);
-	}
-	path->mode = st.st_mode;
-	path->nlink = st.st_nlink;
-	path->uid = st.st_uid;
-	path->gid = st.st_gid;
-	path->atime = st.st_atime;
-	path->mtime = st.st_mtime;
-	path->ctime = st.st_ctime;
-	path->btime = st.st_birthtime;
-	path->size = st.st_size;
-	path->blocks = st.st_blocks;
-	return (1);
 }
 
 t_list		*ft_get_subpath(const char *path, int follow_lnk, int hidden,
@@ -87,13 +57,14 @@ t_list		*ft_get_subpath(const char *path, int follow_lnk, int hidden,
 	while ((ent = readdir(dir)))
 		if ((ent->d_name[0] == '.' && hidden) || ent->d_name[0] != '.')
 		{
-			nw = ft_lstnew(ft_init_path(path, ent->d_name, ent->d_type),
+			nw = ft_lstnew_mv(ft_init_path(path, ent->d_name, ent->d_type),
 					sizeof(t_path));
 			if (set_stat)
 				ft_path_readstat(nw->content, follow_lnk);
 			ft_lstpush(&spath, nw);
 		}
 	closedir(dir);
+	spath = (spath == 0 ? ft_lstnew(0, 0) : spath);
 	return (spath);
 }
 
@@ -102,8 +73,9 @@ void		ft_free_path(t_path **path)
 	if (path == 0 || *path == 0)
 		return ;
 	if ((*path)->path)
-		ft_strdel(&(*path)->path);
+		free((*path)->path);
 	if ((*path)->name)
-		ft_strdel(&(*path)->name);
-	ft_memdel((void **)path);
+		free((*path)->name);
+	free(*path);
+	*path = 0;
 }

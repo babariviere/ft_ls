@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 19:16:25 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/06 16:37:43 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/08 15:06:52 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,53 +34,24 @@ char		*get_gr_name(uid_t uid)
 		return (ft_itoa(uid));
 }
 
-static void	get_file_time_sub(time_t ftime, time_t nw, char **time_str,
-		char **splitted)
-{
-	char		*tmp;
-
-	if (ftime > nw || ftime < (nw - 16070400))
-	{
-		tmp = *time_str;
-		*time_str = ft_strjoin_sep(tmp, "  ", splitted[4]);
-		free(tmp);
-		tmp = *time_str;
-		*time_str = ft_strtrim(tmp);
-		free(tmp);
-	}
-	else
-	{
-		tmp = *time_str;
-		*time_str = ft_strnew(ft_strlen(tmp) + 6);
-		ft_strcpy(*time_str, tmp);
-		ft_strcat(*time_str, " ");
-		ft_strncat(*time_str, splitted[3], 5);
-		free(tmp);
-	}
-}
-
 char		*get_file_time(long tm)
 {
 	time_t		nw;
 	time_t		ftime;
-	char		**splitted;
 	char		*time_str;
+	char		*ctime_res;
 
+	if ((time_str = ft_strnew(13)) == 0)
+		return (0);
 	ftime = tm;
 	nw = time(0);
-	splitted = ft_strsplit(ctime(&ftime), ' ');
-	free(splitted[0]);
-	if (splitted[2][1] != 0)
-		time_str = ft_strjoin_sep(splitted[1], " ", splitted[2]);
+	ctime_res = ctime(&ftime);
+	ft_strncpy(time_str, ctime_res + 4, 7);
+	if (ftime > nw || ftime < (nw - 16070400))
+		ft_strncpy(time_str + 7, ctime_res + 19, 5);
 	else
-		time_str = ft_strjoin_sep(splitted[1], "  ", splitted[2]);
-	free(splitted[1]);
-	free(splitted[2]);
-	get_file_time_sub(ftime, nw, &time_str, splitted);
-	free(splitted[3]);
-	free(splitted[4]);
-	free(splitted);
-	if (time_str == 0)
-		return (0);
+		ft_strncpy(time_str + 7, ctime_res + 11, 5);
+	if (time_str[9] == ' ')
+		ft_strncpy(time_str + 7, ctime_res + 23, 6);
 	return (time_str);
 }
