@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/08 17:11:43 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/11 09:53:11 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,17 +77,17 @@ static void		print_and_free_fmts(t_fmt **fmts, size_t tab_len)
 	free(fmts);
 }
 
-void			print_list_format(t_dlst *files, t_arg opt)
+void			print_list_format(t_lst *files, t_arg opt)
 {
 	t_fmt		**fmts;
-	t_dlst		*hld;
+	t_lst		*hld;
 	size_t		idx;
 	size_t		total_blk;
 	size_t		tab_len;
 
 	if (files == 0 || files->content_size == 0)
 		return ;
-	tab_len = ft_dlstlen(files);
+	tab_len = ft_lstlen(files);
 	if ((fmts = malloc(sizeof(t_fmt *) * (tab_len + 1))) == 0)
 		return ;
 	idx = 0;
