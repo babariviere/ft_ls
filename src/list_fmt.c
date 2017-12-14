@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/30 18:57:53 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/14 11:03:33 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/14 11:34:57 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ static t_fmt	*path_to_fmt(t_path *path, t_arg opt)
 	ft_add_fmt_str(fmt, ft_itoa(path->nlink), 1);
 	ft_add_fmt_str(fmt, get_pw_name(path->uid), 2);
 	ft_add_fmt_str(fmt, get_gr_name(path->gid), 2 +
-			(opt & ARG_HUMAN));
+			((opt & ARG_HUMAN) == ARG_HUMAN));
 	path_to_fmt_sub(path, opt, fmt);
 	ft_add_fmt_str(fmt, ft_strdup(path->name), 1);
 	if (FT_ISLNK(path->mode))
