@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/20 16:41:22 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/11 10:37:47 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/12 16:30:46 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void		list_dir(char *dir, t_arg arg)
 	t_lst	*spath;
 
 	path = ft_init_path(0, dir, -1);
-	ft_path_readstat(path, (arg & ARG_FOLLOW_LNK));
+	ft_path_readstat(path, 1);
 	if (path == 0)
 	{
 		print_last_err(dir);
@@ -41,6 +41,14 @@ void		list_dir(char *dir, t_arg arg)
 	ft_free_path(&path);
 }
 
+void		list_av_sub(t_lst *paths, t_arg arg, int print, int has_file)
+{
+	print_files(paths, arg);
+	if (!(arg & ARG_SORT_TIME) && (arg & ARG_SORT))
+		ft_make_sort_paths(paths, arg);
+	print_dirs(paths, arg, print, has_file);
+}
+
 void		list_av(char **av, t_arg arg)
 {
 	t_lst	*paths;
@@ -58,17 +66,14 @@ void		list_av(char **av, t_arg arg)
 	while (av[idx])
 	{
 		path = ft_lstnew_mv(ft_init_path(0, av[idx++], -1), sizeof(t_path));
-		if (ft_path_readstat(path->content, (arg & ARG_FOLLOW_LNK)) == 0)
+		if (ft_path_readstat(path->content, 1) == 0)
 			return ;
 		if (path->content && !FT_ISDIR(((t_path *)path->content)->mode))
 			has_file = 1;
 		if (path)
 			ft_lstpush(&paths, path);
 	}
-	print_files(paths, arg);
-	if (!(arg & ARG_SORT_TIME) && (arg & ARG_SORT))
-		ft_make_sort_paths(paths, arg);
-	print_dirs(paths, arg, print, has_file);
+	list_av_sub(paths, arg, print, has_file);
 	free(paths);
 }
 

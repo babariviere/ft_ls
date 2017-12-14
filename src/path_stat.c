@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/08 12:32:48 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/08 13:47:56 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/12 16:21:35 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,13 @@ int			ft_path_readstat(t_path *path, int follow_lnk)
 		print_last_err(path->path);
 		return (0);
 	}
+	path->fmode = st.st_mode;
 	path->fatime = st.st_atime;
 	path->fbtime = st.st_birthtime;
 	path->fctime = st.st_ctime;
 	path->fmtime = st.st_mtime;
 	path->fsize = st.st_size;
-	if ((FT_ISLNK(st.st_mode) && follow_lnk))
+	if (follow_lnk)
 		stat(path->path, &st);
 	ft_path_readstat_sub(path, st);
 	return (1);

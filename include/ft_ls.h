@@ -6,7 +6,7 @@
 /*   By: briviere <briviere@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/21 10:02:34 by briviere          #+#    #+#             */
-/*   Updated: 2017/12/11 10:38:34 by briviere         ###   ########.fr       */
+/*   Updated: 2017/12/12 16:29:30 by briviere         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ typedef struct	s_path {
 	char			*name;
 	short			ftype;
 	mode_t			mode;
+	mode_t			fmode;
 	nlink_t			nlink;
 	uid_t			uid;
 	gid_t			gid;

@@ -9,15 +9,13 @@ CC=clang
 LIBS=-Llibft/ -lft
 LIBS_DBG=-Llibft/ -lftdbg
 CFLAGS=-Wall -Werror -Wextra -Iinclude -Ilibft/include
-CALLGRIND_CMD = valgrind --tool=callgrind --callgrind-out-file=$(CALLGRIND_OUT) $(NAME_DBG) $(CMD_ARG) 1> /dev/null
-CALLGRIND_OUT ?= callgrind.out
-CMD_ARG ?= -R ~
+OPTI=-O3
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
 	@make -C libft/ all
-	$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LIBS)
+	$(CC) $(CFLAGS) $(OPTI) -o $(NAME) $(OBJ) $(LIBS)
 
 $(NAME_DBG): $(OBJ_DBG)
 	@make -C libft/ debug
@@ -25,26 +23,14 @@ $(NAME_DBG): $(OBJ_DBG)
 
 obj/%.o: src/%.c
 	@mkdir -p obj
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) $(OPTI) -c -o $@ $<
 
 obj_dbg/%.o: src/%.c
 	@mkdir -p obj_dbg
 	$(CC) $(CFLAGS) -g -c -o $@ $<
 
 debug: $(NAME_DBG)
-
-lldb: $(NAME_DBG)
 	@lldb $(NAME_DBG)
-
-callgrind: $(NAME_DBG)
-	@$(CALLGRIND_CMD)
-	@callgrind_annotate $(CALLGRIND_OUT)
-	@rm -f $(CALLGRIND_OUT)
-
-qcachegrind: $(NAME_DBG)
-	@$(CALLGRIND_CMD)
-	@qcachegrind $(CALLGRIND_OUT)
-	@rm -f $(CALLGRIND_OUT)
 
 leaks: $(NAME_DBG)
 	@valgrind --leak-check=full --track-origins=yes $(NAME_DBG) 1> /dev/null
@@ -63,6 +49,5 @@ fclean: clean
 	@rm -f $(NAME)
 	@rm -f $(NAME_DBG)
 	@rm -rf $(NAME_DBG).dSYM
-	@rm -f $(CALLGRIND_OUT)
 
 re: fclean all
